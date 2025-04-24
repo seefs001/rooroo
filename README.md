@@ -1,4 +1,4 @@
-# 🚀 rooroo (如如) - Your AI Agent Orchestration Crew! 🚀
+# 🚀 rooroo (如如): Minimalist AI Orchestration with Swiss Army Knife Agents 🚀
 
 **Version: v0.0.1**
 
