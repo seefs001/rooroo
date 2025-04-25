@@ -48,10 +48,10 @@ The `rooroo` project was conceived with several core principles in mind, directl
 Understanding these ideas is key to leveraging `rooroo`:
 
 1.  **Minimalist Agent Crew:** `rooroo` operates with a lean team of distinct AI agents (modes). Each agent is a focused 'Swiss Army Knife', optimized for a specific role.
-2.  **Orchestration (The "Conductor"):** The **🧠 Master Orchestrator** mode is central. It interprets goals, plans strategy, delegates tasks to the 'Swiss Army Knife' agents, monitors progress, handles simple issues, and synthesizes results. It manages the overall **minimalist orchestration** process.
+2.  **Orchestration & State Management:** The **🧠 Master Orchestrator** mode is central. It interprets goals, plans strategy, delegates tasks to the 'Swiss Army Knife' agents, monitors progress via `project_state.json`, handles simple issues, and synthesizes results. It manages the overall **minimalist orchestration** process using a central state file.
 3.  **Swiss Army Knife Roles:** Each agent (Architect, UX Specialist, Implementer, Validator, DocuCrafter) has a clearly defined, specialized responsibility and operates precisely within that scope.
 4.  **Structured Artifacts:** The system relies on artifacts (`.specs/`, `.design/`, `.docs/`) to maintain context and provide clear inputs/outputs between agents, facilitating DDD.
-
+5.  **Centralized State (`project_state.json`):** A JSON file acts as the single source of truth for workflow status, task definitions, dependencies, and logs, enabling robust coordination between agents.
 ## 🔄 The Core Development Workflow
 
 `rooroo` guides feature development through a structured, **minimalist** lifecycle managed by the Orchestrator:
