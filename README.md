@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Swiss Army Knife Agents 🚀
 
-**Version: v0.0.4**
+**Version: v0.0.5**
 
 Welcome to `rooroo`, an AI-powered system designed to achieve **minimalist AI orchestration** for software development using a focused crew of **'Swiss Army Knife' agents** right within your VS Code environment via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). Think of it as having a lean, expert virtual team, precisely coordinated.
 
@@ -60,19 +60,22 @@ Understanding these ideas is key to leveraging `rooroo`:
 2.  **✍️ Planning & Design:** The Orchestrator plans phases and delegates detailed design tasks to the relevant 'Swiss Army Knife' agents:
     *   **📐 Solution Architect:** Creates technical specifications (`.specs/`).
     *   **🎨 UX Specialist:** Defines user experience and UI design (`.design/`).
-3.  **💻 Implementation:** Once designs are ready, the Orchestrator assigns precise coding tasks (potentially concurrently) to the **⚡ Apex Implementer**, referencing the specs.
-4.  **✅ Validation:** The **🛡️ Guardian Validator** independently verifies the implemented features against the specifications (TDD aspect), generating reports in `.reports/`.
-5.  **🔄 Iteration:** Based on validation results, the Orchestrator manages feedback loops, assigning refinements or fixes back to the appropriate agents.
+3.  **💻 Implementation:** Once designs are ready, the Orchestrator assigns precise coding tasks (potentially concurrently) to the **⚡ Apex Implementer**, referencing the specs. The Implementer writes unit tests but **stops before executing them**, updating the task status to `'Implemented'`.
+4.  **❓ User Decision Point:** The Orchestrator detects the `'Implemented'` status and **prompts you** to decide the next step: run tests, skip to validation, or defer.
+5.  **✅ Validation / Test Execution:** Based on your input, the Orchestrator delegates the next step:
+    *   If you choose to run tests, a specific test execution task is delegated (often to the **🛡️ Guardian Validator**).
+    *   If you choose to skip to validation, the **🛡️ Guardian Validator** independently verifies the implemented features against the specifications (TDD aspect), generating reports in `.reports/`.
+6.  **🔄 Iteration:** Based on validation or test results, the Orchestrator manages feedback loops, assigning refinements or fixes back to the appropriate agents.
 
 *(Note: Documentation tasks are handled separately by the DocuCrafter, see below).*
 
 ## 🤖 Meet the Crew (The Swiss Army Knives) 🤖
 
-*   **🧠 Master Orchestrator (Conductor):** The project lead and central coordinator. Manages the **minimalist orchestration**, delegates tasks (potentially concurrently), monitors state via `project_state.json`, handles simple issues, and communicates with you. (Key to solving Problem 2)
+*   **🧠 Master Orchestrator (Conductor):** The project lead and central coordinator. Manages the **minimalist orchestration**, delegates tasks (potentially concurrently), monitors state via `project_state.json`, handles simple issues, communicates with you, **prompts you for decisions after implementation**, and delegates test execution based on your input. (Key to solving Problem 2)
 *   **📐 Solution Architect (Blueprint Creator):** Your dedicated 'Swiss Army Knife' for technical design. Creates detailed architectural blueprints and specifications (`.specs/`) and defines implementation tasks in `project_state.json`. (Key to solving Problem 1 & 3)
 *   **🎨 UX Specialist (User Advocate):** Your dedicated 'Swiss Army Knife' for user experience. Designs user flows and UI structures (`.design/`). (Key to solving Problem 1 & 3)
-*   **⚡ Apex Implementer (Precision Builder):** Your dedicated 'Swiss Army Knife' for coding. Writes high-quality code based strictly on specifications, performs optional refinement, and runs tests. (Key to solving Problem 1 & 3)
-*   **🛡️ Guardian Validator (Independent Verifier):** Your dedicated 'Swiss Army Knife' for quality assurance. Independently validates implementation against requirements, generating detailed reports in `.reports/`. (Key to solving Problem 1 & 3)
+*   **⚡ Apex Implementer (Precision Builder):** Your dedicated 'Swiss Army Knife' for coding. Writes high-quality code based strictly on specifications, performs optional refinement, and **writes unit tests but stops before executing them, updating task status to `'Implemented'`**. (Key to solving Problem 1 & 3)
+*   **🛡️ Guardian Validator (Independent Verifier):** Your dedicated 'Swiss Army Knife' for quality assurance. Independently validates implementation against requirements, generates detailed reports in `.reports/`, and **handles specific "run tests" tasks when delegated**. (Key to solving Problem 1 & 3)
 *   **✍️ DocuCrafter (Markdown Documentation Generator):** Your dedicated 'Swiss Army Knife' for documentation. **Operates primarily on the `.docs/` directory.** Handles specific documentation tasks (`init`, `update`) based on `project_state.json`. (Key to solving Problem 3)
 
 ## 🚀 Get Started! 🚀
