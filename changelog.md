@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.0.6] - 2025-04-26
+
+### Fixed
+- **Apex Implementer Behavior:** Fixed an issue where the Apex Implementer mode would repeatedly read files unnecessarily.
+- **Safe JSON Editing Strategy:** Added explicit "CRITICAL JSON EDITING STRATEGY" instructions to all agents (`Master Orchestrator`, `Solution Architect`, `UX Specialist`, `Apex Implementer`, `Guardian Validator`, `DocuCrafter`) that modify `project_state.json`. This strategy mandates reading the relevant object, reconstructing the full object with changes, mentally validating syntax, and replacing the entire object via `edit` to minimize syntax errors caused by incremental patching. Includes error handling instructions if edits fail.
+
+### Changed
+- **Agent Directives Updated (v5/v6/v7/v8/v9/v10):** Updated `customInstructions` across multiple agents to incorporate the Safe JSON Editing Strategy alongside previous context-aware and workflow changes.
+
 ## [v0.0.5] - 2025-04-26
 
 ### Added
