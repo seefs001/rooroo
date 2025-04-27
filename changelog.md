@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [v0.1.0] - 2025-04-28
+
+### BREAKING CHANGE
+- **Major Architectural Shift:** Replaced the single `master-orchestrator` agent with a two-part system (`strategic-planner` and `workflow-coordinator`) to separate planning and execution management.
+    - **`strategic-planner`:** Now handles initial goal interpretation, high-level planning, and initial state file setup (`project_overview.json`, `.state/tasks/`). It then hands off execution management.
+    - **`workflow-coordinator`:** Now manages the execution phase, monitoring `project_overview.json`, delegating tasks, interpreting outcomes, handling user test decisions, and managing errors.
+- **Delegation Model Changed:** The `workflow-coordinator` now delegates implementation/fixing tasks (`feature`, `bugfix`, `refactor`, `chore`) primarily to the **built-in `code` and `debug` modes** instead of the previous dedicated `apex-implementer` agent. Specialist tasks (design, validation, docs) are still delegated to specialist agents.
+- **Removed Agent:** Removed the `apex-implementer` specialist agent. Its responsibilities are now handled by the built-in `code` and `debug` modes under the direction of the `workflow-coordinator`.
+- **State Management for Built-in Modes:** The `workflow-coordinator` is now responsible for inferring the completion status of tasks delegated to built-in modes (which cannot update state files directly) and updating `project_overview.json` accordingly.
+
+### Added
+- **New Agent:** `strategic-planner` - Focuses solely on initial planning and state setup.
+- **New Agent:** `workflow-coordinator` - Focuses solely on execution management, task delegation (including to built-in modes), and state updates during the workflow.
+- **Handoff Mechanism:** Introduced an explicit handoff where `strategic-planner` uses `<switch_mode>` to pass control to `workflow-coordinator`.
+
+### Changed
+- **Error Handling:** Protocols adapted to handle errors originating from both specialist agents (diagnosed via their state files) and built-in modes (often requiring more user interaction or diagnostics via `debug` mode).
+- **Test Execution Flow:** The `workflow-coordinator` now manages the user decision point for test execution after implementation tasks (handled by `code`/`debug`) are inferred to be complete.
+- **Specialist Agent Interaction:** `solution-architect`, `ux-specialist`, `guardian-validator`, `docu-crafter` retain their core roles but now interact with the `workflow-coordinator`.
+
+### Removed
+- **Agent:** `master-orchestrator` - Responsibilities split between the new `strategic-planner` and `workflow-coordinator`.
+- **Agent:** `apex-implementer` - Responsibilities transferred to built-in `code`/`debug` modes managed by the `workflow-coordinator`.
+
 ## [v0.0.7] - 2025-04-27
 
 ### Changed
