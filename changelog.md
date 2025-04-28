@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.1.2] - 2025-04-28
+### Changed
+- **Workflow Coordinator Dispatch Logic Overhauled (Hybrid Model):** The `workflow-coordinator` (now v5 implicitly) uses a fundamentally different dispatch mechanism:
+    - **Type-Based Mapping:** Now uses a fixed mapping (defined in its instructions) to determine the target mode based on the task `type`.
+    - **Hybrid Delegation:**
+        - Specialist Tasks (`tech-design`, `ui-design`, `ux-design`, `validation`, `test-execution`, `documentation-*`): Delegated to the corresponding custom specialist modes (`solution-architect`, `ux-specialist`, `guardian-validator`, `docu-crafter`) using `<new_task>` and passing the `taskStateFile`. Relies on these specialists to update the overview status directly upon completion/error.
+        - Coding/Fixing Tasks (`feature`, `refactor`, `chore`, `bugfix`): Explicitly delegated to the built-in `code` and `debug` modes using `<new_task>` **without** passing the `taskStateFile`.
+    - **Completion Handling for Built-in Modes:** Shifted from primary reliance on inference to **explicitly requiring user confirmation** via `<ask_followup_question>` before updating the status of tasks handled by built-in modes to `Implemented`.
+- **Strategic Planner Task Definition:**
+    - Now assigns tasks using a **predefined, fixed list of `type` values**.
+    - No longer defines or plans an `intendedMode`; the `type` alone dictates the Coordinator's dispatch action.
+- **Specialist Agent Instructions Refined:** Instructions for `solution-architect`, `ux-specialist`, `guardian-validator`, and `docu-crafter` updated to:
+    - Explicitly reference the specific `type`(s) of tasks they handle.
+    - Reinforce their responsibility to directly update **only** the `project_overview.json` status for their assigned task upon completion ('Done', 'Validated', 'Failed') or error ('Error', 'Blocked-Debug').
+- **State Schema (`project_overview.json`):**
+    - The list of allowed values for the `type` field is now explicitly defined and fixed within the Planner/Coordinator instructions.
+    - The `Implemented` status remains necessary for the multi-step flow involving built-in modes and user confirmation/testing.
+
+### Removed
+- **Coordinator Logic:** Removed the primary reliance on *inferring* completion status for tasks delegated to built-in modes. Replaced with an explicit user confirmation loop.
+
+
 ## [v0.1.1] - 2025-04-28
 
 ### Changed
