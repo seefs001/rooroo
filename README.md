@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.1.0** [Changelog](changelog.md)
+**Version: v0.1.1** [Changelog](changelog.md)
 
 > **Note on v0.1.0 (Breaking Change):** This version introduces a major architectural shift separating planning (`Strategic Planner`) and execution (`Workflow Coordinator`), and removes the `Apex Implementer` in favor of built-in IDE coding modes. This aims for simplicity, avoids redundancy, and enables cost savings. **[See detailed rationale here.](v0.1.0.md)**
 
