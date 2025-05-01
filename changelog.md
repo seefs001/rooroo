@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.2.1] - 2025-05-01
+
+### Added
+
+- **💡 Idea Sparker (Interactive Partner):** Added a new standalone agent mode designed for collaborative brainstorming and idea exploration. Operates independently of the core workflow.
+
 ## [v0.2.0] - 2025-04-30
 
 ### Changed

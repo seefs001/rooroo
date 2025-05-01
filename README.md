@@ -1,13 +1,14 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.2.0** [Changelog](changelog.md)
+**Version: v0.2.1** [Changelog](changelog.md)
 
-> **Note on v0.2.0 (Breaking Change & Optimization):** This version introduces major architectural shifts focused on efficiency and cost optimization. Key changes include:
-> * **Coordinator-Led Workflow & Triage:** `Workflow Coordinator` (Cheap Model) is now the primary interface, performing rule-based triage and invoking the `Strategic Planner` (Smart Model) on-demand.
-> * **Decoupled State & Signal-Driven Execution:** Agents (`coder-monk`, specialists) now create their own task state file (`.state/tasks/{taskId}.json`) upon completion. The Coordinator waits for completion signals, reads these files, validates them, and performs batch updates to `project_overview.json`.
-> * **Planner-Guided Delegation:** The Planner defines tasks in `project_overview.json` with a `suggested_mode` (e.g., `coder-monk`, `solution-architect`), which the Coordinator strictly follows for delegation.
-> * **`coder-monk`:** Introduced a dedicated `coder-monk` for coding/debugging tasks, replacing direct reliance on built-in modes in the core workflow.
-> * **Cost Optimization Focus:** Explicit model tier recommendations (Smart/Cheap) and minimized API calls via decoupled state and batch overview updates.
+> **Note on v0.2.1:** This version adds the `💡 Idea Sparker` mode for interactive brainstorming, operating independently of the core task execution workflow.
+
+> **Note on v0.2.0 (Breaking Change & Optimization):** Major efficiency/cost updates. Key changes:
+> * **Coordinator-Led (Cheap):** Primary interface, triages, follows Planner's `suggested_mode`.
+> * **Decoupled State:** Agents (`coder-monk`, etc.) create own state files (`.state/tasks/*.json`). Coordinator reads these after signals, batch updates overview.
+> * **Dedicated `coder-monk`:** Handles coding.
+> * **Cost Focus:** Smart/Cheap model tiers, fewer API calls.
 > **[See v0.2.0 rationale for details.](v0.2.0.md)**
 
 > **Note on v0.1.0 (Previous Breaking Change):** v0.1.0 introduced the Planner/Coordinator split and removed the `Apex Implementer` in favor of built-in IDE coding modes. [See v0.1.0 rationale.](v0.1.0.md)
@@ -60,17 +61,6 @@ The core principles are refined for efficiency and clarity:
 * **💾 Clear Artifacts & State:** Organizes outputs (`.state/specs/`, `.state/design/`, etc.) and provides both a central overview (`project_overview.json`) and detailed task states (`.state/tasks/{taskId}.json`) created by the executing agent. (Supports Problem 3)
 * **💰 Cost Optimized:** Designed for cost savings through differentiated **Smart/Cheap LLM** use, decoupled state reporting, and batch overview updates. (Solves Problem 4)
 
-## 🔑 Core Concepts
-
-1.  **Minimalist Agent Crew:** Planner (Smart), Coordinator (Cheap), Architect (Smart), UX Specialist (Smart), Validator (Cheap), DocuCrafter (Cheap), Coder Monk (Custom).
-2.  **Coordinator-Led, Signal-Driven Orchestration with Planner Guidance:**
-    * **🚦 Workflow Coordinator (Primary / Cheap):** Performs rule-based triage. Invokes Planner if needed. Manages execution by following Planner's `suggested_mode`. **Waits for completion signals**, **reads results from agent-specific task files** (`.state/tasks/{taskId}.json`), validates them, and updates overview state via **batch edits**.
-    * **🏛️ Strategic Planner (On-Demand / Smart):** Executes planning tasks when called by Coordinator. Populates `project_overview.json` (with `delegation_details` including `suggested_mode` and `NNN:type:subject` `taskId`). **Does not create `.state/tasks/` files.**
-3.  **Specialist Roles (Smart/Cheap/Custom):** Architect (Smart), UX Specialist (Smart), Validator (Cheap), DocuCrafter (Cheap), Coder Monk (Custom) handle specific tasks suggested by Planner.
-4.  **Planner-Driven Delegation:** Coordinator uses `suggested_mode` from the overview for delegation.
-5.  **Decoupled State Creation & Reporting:** Executing agents (Specialists, Coder) **create and write ONLY their own task file** (`.state/tasks/{taskId}.json`) upon completion/failure. Coordinator reads these files.
-6.  **Structured Artifacts:** Relies on outputs organized within `.state/` subdirectories: `.state/specs/`, `.state/design/`, `.state/docs/`, `.state/reports/`.
-
 ## 📁 Directory Structure
 
 This diagram shows the typical directory layout generated and managed by `rooroo`:
@@ -78,6 +68,9 @@ This diagram shows the typical directory layout generated and managed by `rooroo
 ```
 <Project Root>/
 ├── .state/                   # Internal state managed by workflow
+│   └── brainstorming/        # Output from Idea Sparker (Smart, Optional)
+│       └── session_summary.md
+│   │
 │   └── tasks/                # Individual task state files (CREATED by the agent executing the task)
 │       ├── 010:chore:setup_project.json # Example: Created by Coder Monk on completion
 │       ├── 020:design:api_spec.json    # Example: Created by Solution Architect on completion
@@ -115,19 +108,21 @@ This diagram shows the typical directory layout generated and managed by `rooroo
 
 | Agent Role             | Recommended Model Tier | Rationale                                                                        | Example Models (Illustrative)          |
 | :--------------------- | :--------------------- | :------------------------------------------------------------------------------- | :------------------------------------- |
-| **Workflow Coordinator** | **⚡ Cheap/Fast**     | Primary interface, rule-based triage, signal-driven execution, reads state, batch updates. | Gemini Flash, Claude Haiku, Grok-1 | 
-| **Strategic Planner** | **🧠 Smart/Expensive** | Complex goal interpretation, decomposition, planning, suggesting modes.          | GPT-4o, Claude 3 Sonnet/Opus, Gemini 1.5/2 Pro |
-| **Solution Architect** | **🧠 Smart/Expensive** | Deep technical design, defining sub-tasks, complex specifications.               | GPT-4o, Claude 3 Sonnet/Opus, Gemini 1.5/2 Pro |
-| **UX Specialist** | **🧠 Smart/Expensive** | UI structure, UX flows, potentially complex design assets.                       | GPT-4o, Claude 3 Sonnet/Opus, Gemini 1.5/2 Pro |
-| **Guardian Validator** | **⚡ Cheap/Fast**     | Executing defined tests/checks, structured reporting via state file & reports. | Gemini Flash, Claude Haiku, Grok-1 | 
-| **DocuCrafter** | **⚡ Cheap/Fast**     | Generating/updating documentation based on context, reporting via state file. | Gemini Flash, Claude Haiku, Grok-1 | 
-| **Coder Monk** | *Custom / Varies* | Executes coding/debugging, creates state file. Model depends on complexity. | GPT-4o, Claude 3 Sonnet, Gemini 1.5/2 Pro |
+| **Workflow Coordinator** | **⚡ Cheap/Fast**     | Primary interface, rule-based triage, signal-driven execution, reads state, batch updates. | Gemini Flash, Claude Haiku, Grok Mini | 
+| **Strategic Planner** | **🧠 Smart/Expensive** | Complex goal interpretation, decomposition, planning, suggesting modes.          |O-Series, Claude Sonnet, Gemini Pro |
+| **Solution Architect** | **🧠 Smart/Expensive** | Deep technical design, defining sub-tasks, complex specifications.               |O-Series, Claude Sonnet, Gemini Pro |
+| **UX Specialist** | **🧠 Smart/Expensive** | UI structure, UX flows, potentially complex design assets.                      |O-Series, Claude Sonnet, Gemini Pro |
+| **Guardian Validator** | **⚡ Cheap/Fast**     | Executing defined tests/checks, structured reporting via state file & reports. | Gemini Flash, Claude Haiku, Grok Mini | 
+| **DocuCrafter** | **⚡ Cheap/Fast**     | Generating/updating documentation based on context, reporting via state file. | Gemini Flash, Claude Haiku, Grok Mini | 
+| **Coder Monk** | *Custom / Varies* | Executes coding/debugging, creates state file. Model depends on complexity. | Your Favorite Coder Model |
+| **Idea Sparker** | **🧠 Smart/Expensive** | Interactive brainstorming, idea generation, synthesis, conversation.             |O-Series, Claude Sonnet, Gemini Pro |
 
 Configure the underlying LLM for each agent mode (if supported by your environment) to optimize cost vs. capability.
 
 ## 🔄 The Core Development Workflow
 
-1.  **🎯 Goal Setting & Triage:** You provide your goal to the **🚦 Workflow Coordinator (Cheap)**. It performs rule-based triage:
+0.  **(Optional) 💡 Brainstorming:** Engage with the **💡 Idea Sparker (Smart)** for interactive brainstorming. It can help refine your goal or explore options. It may save outputs (like summaries) to `.state/brainstorming/`.
+1.  **🎯 Goal Setting & Triage (Input to Coordinator):** Provide your goal to the **🚦 Workflow Coordinator (Cheap)**. You can reference brainstorming outputs (e.g., `.state/brainstorming/session_summary.md`) to give it better context. It performs rule-based triage:
     *   *Simple Code/Debug:* Delegates directly to **🧘‍♂️ Coder Monk**.
     *   *Simple Docs:* Delegates directly to **✍️ DocuCrafter (Cheap)**.
     *   *Complex Goal:* Delegates planning to **🏛️ Strategic Planner (Smart)**.
@@ -157,12 +152,22 @@ Configure the underlying LLM for each agent mode (if supported by your environme
 
 ## 📊 Workflow Diagram
 
-This ASCII diagram visualizes the `rooroo` v0.2.0 workflow: Triage & Delegation, Agent Execution & State Creation, and Coordinator Result Processing.
+This ASCII diagram visualizes the `rooroo` v0.2.1 workflow, including the optional brainstorming step.
 
 ```text
++----------------------------------------------------------------------+ Phase 0: Optional Brainstorming +----------------------------------------------------------------------+
+
+[User Initiates Brainstorming]
+     |
+     v
+[💡 Idea Sparker (Smart)] <--> [User (Interactive Conversation)]
+     |
+     v
+[Creates Optional Output in .state/brainstorming/]
+
 +----------------------------------------------------------------------+ Phase 1: Triage & Initial Delegation +----------------------------------------------------------------------+
 
-[User Input]
+[User Input (Potentially referencing Brainstorm Output)]
      |
      v
 [🚦 Workflow Coordinator (Cheap)]
@@ -221,18 +226,21 @@ This ASCII diagram visualizes the `rooroo` v0.2.0 workflow: Triage & Delegation,
 * **🛡️ Guardian Validator (Cheap Model Recommended):** Executes validation/tests against a `target_task_id`. Creates reports (output to `.state/reports/`). Reports results (status, `validation_result_for_target`, report path) **only** in own task state file (`.state/tasks/{taskId}.json`). *Candidate for fast/cheap LLM.*
 * **✍️ DocuCrafter (Cheap Model Recommended):** Generates/updates documentation (output to `.state/docs/`). Creates **only** own task state file (`.state/tasks/{taskId}.json`) upon completion, including output paths. *Candidate for fast/cheap LLM.*
 * **🧘‍♂️ Coder Monk (Custom):** Executes coding/debugging/refactoring tasks based on instructions. Modifies files in the workspace. Creates **only** own task state file (`.state/tasks/{taskId}.json`) upon completion, reporting status (`Done`/`Failed`/`Error`) and modified file paths. *Model tier depends on task complexity.*
+* **💡 Idea Sparker (Interactive Partner / Smart Model Recommended):** Facilitates interactive brainstorming sessions. Explores topics, generates diverse ideas, presents options, and dives deeper based on user guidance. Operates conversationally and independently of the main task workflow. *Candidate for smart/expensive LLM.*
 
 ## 🚀 Get Started!  🚀
 
 To use this `rooroo` agent team:
 
 1.  **Install Roo Code:** Ensure the [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline) is installed.
-2.  **Override Local Modes:** Copy the latest `.roomodes` file (v0.2.0+) into your workspace root.
+2.  **Override Local Modes:** Copy the latest `.roomodes` file (v0.2.1+) into your workspace root.
 3.  **Reload VS Code:** Use `Ctrl+Shift+P` or `Cmd+Shift+P` -> "Developer: Reload Window".
-4.  **Activate the Coordinator:** Open Roo Code chat, select **🚦 Workflow Coordinator (Cheap Model - Primary Interface)**.
-5.  **State Your Goal:** Describe the project or task.
-6.  **Coordinator Triage & Delegation:** The Coordinator performs triage. It may delegate planning to **🏛️ Strategic Planner (Smart)**, design to **📐 Solution Architect (Smart)**, documentation to **✍️ DocuCrafter (Cheap)**, or coding directly to **🧘‍♂️ Coder Monk**. Wait for the Planner if invoked.
-7.  **Coordinator Executes Plan (Signal Driven):** Follow the Coordinator's lead as it delegates tasks based on the Planner's `suggested_mode`. Agents execute and create their own `.state/tasks/{taskId}.json` files upon completion. The Coordinator waits for signals, reads these files, validates them, and reports progress via batched updates to `project_overview.json`.
-8.  **Review Artifacts & State:** Monitor progress via output directories within `.state/` (`.state/specs/`, `.state/design/`, etc.), individual task state files in `.state/tasks/`, and the central `project_overview.json`.
+4.  **(Optional) Activate Idea Sparker (for Brainstorming):** For ideation sessions, open Roo Code chat and select **💡 Idea Sparker (Interactive Partner)**. Engage directly in a brainstorming conversation. Let it save any useful summary to `.state/brainstorming/`.
+5.  **Activate the Coordinator (for Tasks):** For executing planned tasks, open Roo Code chat, select **🚦 Workflow Coordinator (Cheap Model - Primary Interface)**.
+6.  **State Your Goal (Coordinator):** Describe the project or task you want planned and executed. *Crucially, you can reference any relevant brainstorming output file here* (e.g., "Based on the ideas in `.state/brainstorming/session_summary.md`, I want to implement...")
+7.  **Coordinator Triage & Delegation:** The Coordinator performs triage. It may delegate planning to **🏛️ Strategic Planner (Smart)**, design to **📐 Solution Architect (Smart)**, documentation to **✍️ DocuCrafter (Cheap)**, or coding directly to **🧘‍♂️ Coder Monk**. Wait for the Planner if invoked.
+8.  **Coordinator Executes Plan (Signal Driven):** Follow the Coordinator's lead as it delegates tasks based on the Planner's `suggested_mode`. Agents execute and create their own `.state/tasks/{taskId}.json` files upon completion. The Coordinator waits for signals, reads these files, validates them, and reports progress via batched updates to `project_overview.json`.
+9.  **Review Artifacts & State:** Monitor progress via output directories within `.state/` (`.state/brainstorming/`, `.state/specs/`, etc.), individual task state files in `.state/tasks/`, and the central `project_overview.json`.
+10. **(Repeat)** Continue interacting with the Coordinator for task execution or the Idea Sparker for further brainstorming as needed.
 
-Let `rooroo` v0.2.0 bring **efficient, Coordinator-led, signal-driven orchestration** and **specialized expertise** to your AI development!
+Let `rooroo` v0.2.1 bring **efficient, Coordinator-led, signal-driven orchestration**, **specialized expertise**, and **collaborative ideation** to your AI development!
