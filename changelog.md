@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.3.1] - 2025-05-04 (Placeholder Date)
+
+### Changed
+
+- **Schema Formalization & Instruction Rigor:**
+    - Replaced textual descriptions of schema rules with embedded, formal JSON Schema definitions within the `customInstructions` for both `project_overview.json` (in `Strategic Planner` and `Workflow Coordinator`) and the Agent State File (`.state/tasks/{taskId}.json`) used by all executing agents and processed by the `Workflow Coordinator`.
+    - Significantly enhanced the clarity, strictness, and consistency of agent instructions regarding:
+        - **Mandatory Schema Adherence:** Explicitly requiring outputs (state files, overview structure) to validate against the defined schemas.
+        - **State File Creation:** Emphasizing the creation of the `.state/tasks/{taskId}.json` file as the strict "LAST STEP" for executing agents.
+        - **Coordinator Validation:** Highlighting the `Workflow Coordinator`'s responsibility to perform schema validation on received state files before processing.
+        - **Sub-task Integration:** Refining the description of how the `Workflow Coordinator` processes `new_tasks_to_integrate`, assigns final IDs, and updates dependencies.
+- **Agent Role Definition Refinements:** Minor updates to agent role definitions for improved clarity and alignment with the formalized instructions.
+
+
 ## [v0.3.0] - 2025-05-04
 
 ### Added

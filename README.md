@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.3.0** | [Changelog](changelog.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
+**Version: v0.3.1** | [Changelog](changelog.md) | [v0.3.1 Details](v0.3.1.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
 
 `rooroo` provides **minimalist AI orchestration** for software development using **specialist agents** within VS Code via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). It employs a lean, coordinated team with distinct planning and execution phases, driven by a **Coordinator-led, signal-driven workflow**.
 
@@ -20,8 +20,8 @@ In the context of this project, the name evokes the idea of an underlying, consi
 ## ✨ Key Principles
 
 *   **Minimalism & Specialization:** A small team of agents with clear roles (Smart/Cheap tiers) avoids over-complexity.
-*   **Coordinator-Led Orchestration:** An efficient, signal-driven workflow where the Coordinator triages tasks, follows the Planner's `suggested_mode`, waits for completion signals, reads agent state files (`.state/tasks/*.json`), and performs batch updates to the central overview (`project_overview.json`).
-*   **Decoupled State & Central Config:** Agents manage their own state (`.state/tasks/*.json`), which the Coordinator reads. The Planner defines project-wide `project_configuration`, and the Coordinator injects it into tasks, preventing configuration drift.
+*   **Coordinator-Led Orchestration:** An efficient, signal-driven workflow where the Coordinator triages tasks, follows the Planner's `suggested_mode`, waits for completion signals, reads agent state files (`.state/tasks/*.json`), **validates state files against a schema**, and performs batch updates to the central overview (`project_overview.json`).
+*   **Decoupled State & Central Config:** Agents manage their own state (`.state/tasks/*.json`), which the Coordinator reads and validates. The Planner defines project-wide `project_configuration`, and the Coordinator injects it into tasks, preventing configuration drift.
 *   **Consistent Task Management:** The Coordinator assigns final sequential IDs (`NNN#...`) to all tasks, including sub-tasks initially proposed with temporary IDs (`TEMP#...`).
 *   **Cost-Effectiveness:** Targeted use of Smart vs. Cheap LLMs per role, optimized through decoupled state and batch updates.
 *   **Structured Workflow:** Defined roles, artifacts, and optional DDD/TDD focus promote clarity.
@@ -49,7 +49,7 @@ Follow these steps to use the `rooroo` agent team:
     *   The agent signals completion.
 9.  **Result Processing & Iteration:**
     *   The Coordinator receives the signal and reads the agent's `.state/tasks/{taskId}.json`.
-    *   It validates the state file, assigns final sequential IDs (`NNN#...`) to any temporary sub-task IDs.
+    *   It validates the state file **against its schema**, assigns final sequential IDs (`NNN#...`) to any temporary sub-task IDs.
     *   It prepares a list of all necessary updates (status changes, new tasks).
     *   It applies all updates to `project_overview.json` in a **single batch operation**.
     *   The cycle repeats until the plan is complete.
