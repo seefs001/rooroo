@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [v0.3.0] - 2025-05-04
+
+### Added
+
+- **Project-Wide Configuration (`project_configuration`):**
+    - `Strategic Planner` can now define an optional, top-level `project_configuration` object in `project_overview.json` to hold project-specific settings (e.g., tool paths, URLs, common env vars).
+    - `Workflow Coordinator` now injects this `project_configuration` (if present) into the `delegation_details.context.project_config` of delegated tasks.
+    - All executing agents (`Solution Architect`, `UX Specialist`, `Guardian Validator`, `DocuCrafter`, `Coder Monk`) are instructed to check for and use this configuration from their context.
+- **Centralized Sub-Task ID Assignment:**
+    - Agents defining sub-tasks (like `Solution Architect`) now use a temporary `taskId` format `TEMP#type#subject` in their state file's `new_tasks_to_integrate` array.
+    - `Workflow Coordinator` is now responsible for reading these temporary tasks, determining the next sequential `NNN` prefix based on existing tasks in `project_overview.json`, assigning the final `NNN#type#subject` ID, and integrating the tasks with their final IDs into the overview.
+
+### Changed
+
+- **Agent Instructions:** Updated instructions across all relevant agents (`Strategic Planner`, `Workflow Coordinator`, `Solution Architect`, `UX Specialist`, `Guardian Validator`, `DocuCrafter`, `Coder Monk`) to reflect the creation, injection, consumption, or processing of the `project_configuration` object and the handling of temporary (`TEMP#...`) vs. final (`NNN#...`) task IDs.
+
 ## [v0.2.2] - 2025-05-01
 
 ### Changed
