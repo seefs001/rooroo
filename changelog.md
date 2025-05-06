@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [v0.3.3] - 2025-05-06
+
+### Changed
+
+- **Sub-Task Proposal Structure in Agent State Files:**
+    - Agents (`Solution Architect`, `Coder Monk`, `UX Specialist`, etc.) now define `new_tasks_to_integrate` in their `.state/tasks/{taskId}.json` state files using a flattened structure for delegation details. Instead of a nested `delegation_details` object, properties such as `context_for_delegation`, `acceptance_criteria_for_delegation`, and `suggested_mode_for_delegation` are now direct, top-level properties of each sub-task object within the `new_tasks_to_integrate` array.
+    - The main `description` field of the sub-task object in the state file is now used for both the task's primary description and its `delegation_details.description` when the task is integrated into `project_overview.json`.
+- **Workflow Coordinator Adaptation :**
+    - The `Workflow Coordinator` has been updated to parse this new flattened structure for sub-tasks from agent state files.
+    - When integrating these sub-tasks into `project_overview.json`, the Coordinator reconstructs the standard nested `delegation_details` object. This ensures the final task structure within `project_overview.json` remains consistent with previous versions.
+- **Agent Instruction Updates:** `customInstructions` for `Workflow Coordinator`, `Solution Architect`, `Coder Monk`, `UX Specialist`, `Guardian Validator`, and `DocuCrafter` have been updated to reflect this new flattened format for proposing sub-tasks. This change primarily affects how agents internally define sub-tasks for the Coordinator.
+
 ## [v0.3.2] - 2025-05-05
 
 ### Added
@@ -23,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Agent Instructions:** Updated `customInstructions` for `Workflow Coordinator`, `Coder Monk`, and `Solution Architect` to implement and support the automated refinement loop.
 - **Coder Monk Failure Signaling:** `Coder Monk` (v2.6) is now instructed to explicitly signal failures due to insufficient specifications using `status: "Failed"` and a standardized error message format, triggering the refinement process.
 - **Minor Agent Role Updates:** Slightly adjusted titles and descriptions for clarity (e.g., Coder Monk mentions "Refinement Signaling").
-
 
 ## [v0.3.1] - 2025-05-04
 
