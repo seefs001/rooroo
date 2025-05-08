@@ -1,3 +1,39 @@
+## [v0.5.0] - 2025-05-09
+
+### BREAKING CHANGE
+
+Version 0.5.0 introduces a fundamental overhaul of the `rooroo` orchestration model, agent communication, and file structure. These changes are not backward compatible with v0.4.x.
+
+- **Coordinator Redesign: `Workflow Coordinator` is now `Rooroo Navigator`**
+    - The `workflow-coordinator` mode has been replaced by `rooroo-navigator`.
+    - `Rooroo Navigator` operates with a different set of directives, focused on direct agent interaction via "Output Envelopes" rather than monitoring file-based state. It serves as the primary user interface and central coordinator, featuring a distinct persona and interactive communication style.
+    - All task IDs are now prefixed with `ROO#` (e.g., `ROO#PLAN_...`, `ROO#SUB_...`, `ROO#TEMP_...`).
+
+- **State Management & File Structure Overhaul: Introduction of `.rooroo/` Namespace**
+    - **Retirement of Agent State Files for Reporting:** The primary mechanism for agents to report status or detailed output (`.state/tasks/TASK_ID.json`) has been replaced by "Output Envelopes".
+    - **New `.rooroo/` Directory Structure:** All core operational files and task-specific data are now under the `.rooroo/` namespace. The previous `.state/` directory is no longer used for these purposes.
+        - Task queue is now `.rooroo/queue.jsonl` (managing `ROO#` tasks).
+        - Activity log is now `.rooroo/logs/activity.jsonl` (Navigator uses a `SafeLogEvent` procedure).
+        - **Task Context Files:** A dedicated Markdown context file for each task is created at `.rooroo/tasks/TASK_ID/context.md`. This file serves as the primary briefing for the assigned agent (Planner creates for planned tasks, Navigator for temp tasks).
+        - **Standardized Artifact Paths:** Agents store their work products in a structured way: `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
+        - Optional high-level plans can be stored in `.rooroo/plans/` (created by `rooroo-planner`).
+        - Optional brainstorming session notes in `.rooroo/brainstorming/` (created by `rooroo-idea-sparker`).
+    - The previous `.state/` subdirectories for general design, docs_proposals, reports, and specs are superseded by the new artifact structure under `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
+
+- **New Agent Communication Protocol: Output Envelopes**
+    - Agents (e.g., `rooroo-planner`, `rooroo-developer`) now communicate their results, status, or need for clarification back to the `Rooroo Navigator` by outputting a structured JSON string called an "Output Envelope" (e.g., `{\"status\": \"Done\", \"message\": \"...\", \"output_artifact_paths\": [...]}`). This output is typically provided as the result of an agent's `attempt_completion` call, which the Navigator then processes.
+    - This replaces the previous model where agents would write a JSON state file to `.state/tasks/TASK_ID.json` for the coordinator to read and interpret.
+
+- **Modified Agent Responsibilities & Interactions:**
+    - **`Rooroo Navigator` (formerly `workflow-coordinator`):** Manages user interaction, triages requests (delegating complex work to `rooroo-planner`, simple tasks directly using `ROO#TEMP_` IDs), dispatches tasks from `.rooroo/queue.jsonl`, processes agent "Output Envelopes", logs events to `.rooroo/logs/activity.jsonl`, and handles user decisions.
+    - **`Rooroo Planner` (formerly `strategic-planner`):** Receives directives from the Navigator. Designs project plans, assigns `ROO#SUB_` task IDs. Creates detailed `context.md` files for each sub-task in `.rooroo/tasks/SUB_TASK_ID/context.md`. Reports back to the Navigator via a `PlannerOutput`-style envelope which includes `queue_tasks_json_lines`.
+    - **Executing Agents (e.g., `rooroo-developer` formerly `coder-monk`, `rooroo-analyzer`, `rooroo-documenter` formerly `docu-crafter`, `rooroo-idea-sparker` formerly `idea-sparker`):** Receive their task briefing via a `CONTEXT_FILE_PATH` (pointing to the `context.md`). Create artifacts in `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`. Report back to the Navigator via a standardized JSON Output Envelope.
+
+### Changed
+- All agent `customInstructions` in `.roomodes` have been significantly updated to reflect the new `Rooroo Navigator`-centric workflow, the `.rooroo/` file system, "Output Envelope" communication, `ROO#` task IDs, and modified roles. Agent slugs have been updated (e.g., `workflow-coordinator` -> `rooroo-navigator`, `strategic-planner` -> `rooroo-planner`, `coder-monk` -> `rooroo-developer`, etc.).
+- Documentation (`README.md`) updated to reflect the new architecture.
+
+
 ## [v0.4.3] - 2025-05-09
 ### Changed
 - Updated `customInstructions` for most agents, reflecting incremental improvements and version changes in their internal directives. Key changes include:
@@ -231,3 +267,4 @@
 
 ## [v0.0.1] - Initial Release
 - Initial project setup and definition of core agent roles.
+

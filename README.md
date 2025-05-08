@@ -1,8 +1,8 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.4.3** | [Changelog](changelog.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
+**Version: v0.5.0** | [Changelog](changelog.md) | [v0.5.0 Details](v0.5.0.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
 
-`rooroo` provides **minimalist AI orchestration** for software development using **specialist agents** within VS Code via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). It employs a lean, coordinated team with distinct planning and execution phases, driven by a **Coordinator-led, signal-driven workflow** using **`task_queue.jsonl`** for task management and **`task_log.jsonl`** for event logging. The `Strategic Planner` manages the queue, while the `Workflow Coordinator` dispatches tasks and logs progress.
+`rooroo` provides **minimalist AI orchestration** for software development using **specialist Rooroo agents** within VS Code via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). It employs a lean, coordinated team with distinct planning and execution phases, driven by a **`Rooroo Navigator`-led, Output Envelope-based workflow**. Task management relies on `.rooroo/queue.jsonl`, event logging on `.rooroo/logs/activity.jsonl`, detailed task briefings are provided in `.rooroo/tasks/TASK_ID/context.md`, and agent-produced artifacts are stored in `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
 
 ## 🤔 What's in a Name? The Meaning of "rooroo (如如)"
 
@@ -19,193 +19,221 @@ In the context of this project, the name evokes the idea of an underlying, consi
 
 ## ✨ Key Principles
 
-*   **Minimalism & Specialization:** A small team of agents with clear roles (Smart/Cheap tiers) avoids over-complexity.
-*   **Coordinator-Led Orchestration:** An efficient, signal-driven workflow where the `Workflow Coordinator` triages new requests (delegating planning to the `Strategic Planner`), dispatches tasks from `task_queue.jsonl` based on the Planner's definitions, waits for completion signals, reads agent state files (`.state/tasks/*.json`), logs events to `task_log.jsonl`, consumes tasks from the queue, and interactively handles certain error conditions (like missing state files or agent-reported failures) with the user.
-*   **Planner-Managed Queue:** The `Strategic Planner` has sole authority over `task_queue.jsonl`, including task creation, ID assignment, integration of new work, and managing refinement loops by modifying the queue.
-*   **Decoupled State & Logging:** Agents manage their own state (`.state/tasks/*.json`), which the Coordinator reads. Key lifecycle events are logged to `task_log.jsonl` by the Coordinator and Planner.
-*   **Consistent Task Management:** The `Strategic Planner` assigns final sequential IDs (`NNN#...`) to all tasks in `task_queue.jsonl`.
-*   **Cost-Effectiveness:** Targeted use of Smart vs. Cheap LLMs per role, optimized through clear separation of concerns.
-*   **Structured Workflow:** Defined roles, artifacts, and line-oriented data files promote clarity and robustness.
+*   **Minimalism & Specialization:** A small team of Rooroo agents with clear roles, leveraging appropriate LLM tiers.
+*   **Navigator-Led Orchestration:** An efficient, interactive workflow where the **🧭 Rooroo Navigator** serves as the primary user interface and central coordinator. It engages the `rooroo-planner` for complex work, dispatches tasks from `.rooroo/queue.jsonl`, processes agent responses (structured JSON "Output Envelopes"), logs events to `.rooroo/logs/activity.jsonl` using its `SafeLogEvent` procedure, and guides the user through decisions and failures.
+*   **Planner-Managed Queue & Context:** The `rooroo-planner` has sole authority over creating planned tasks for `.rooroo/queue.jsonl` and creates detailed task briefings in `.rooroo/tasks/TASK_ID/context.md` for each sub-task.
+*   **Output Envelope-Based Communication:** Agents report status, results, or ask questions by returning a structured JSON string "Output Envelope" directly to the `Rooroo Navigator` (typically via `attempt_completion`), replacing file-based state signaling for reporting task outcomes.
+*   **Structured Artifacts:** All task-related files (context briefings, agent-produced artifacts) are organized within a clear `.rooroo/tasks/TASK_ID/` structure.
+*   **Consistent Task IDs:** All tasks use the `ROO#` prefix (e.g., `ROO#PLAN_...`, `ROO#TEMP_...`, `ROO#SUB_...`) for unique identification throughout the system.
+*   **Cost-Effectiveness:** Targeted use of Smart vs. Cheap LLMs per role.
+*   **Structured Workflow:** Defined roles, artifacts, communication protocols, and line-oriented data files promote clarity and robustness.
 
 ## 🚀 Get Started & Core Workflow
 
-Follow these steps to use the `rooroo` agent team:
+Follow these steps to use the `rooroo` agent team (v0.5.0+):
 
 1.  **Install Roo Code:** Ensure the [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline) is installed.
-2.  **Override Local Modes:** Copy the latest `.roomodes` file (v0.4.0+) into your workspace root.
+2.  **Load Modes:** Ensure your `.roomodes` file (v0.5.0 compatible, defining the `rooroo-...` agents) is in your workspace root.
 3.  **Reload VS Code:** Use `Ctrl+Shift+P` or `Cmd+Shift+P` -> "Developer: Reload Window".
-4.  **(Optional) Brainstorming:** Activate **💡 Idea Sparker (Smart)** in Roo Code chat for interactive ideation. It can save summaries to `.state/brainstorming/`.
-5.  **Activate Coordinator:** Select **🚦 Workflow Coordinator (Cheap)** in Roo Code chat.
-6.  **State Your Goal:** Describe your project or task. You can reference brainstorming outputs.
-7.  **Coordinator Triage & Planner Engagement:**
-    *   The `Workflow Coordinator` analyzes your request.
-    *   *Complex Goal/New Project/Significant Change:* Informs user and creates a temporary task in `task_queue.jsonl` for the **🏛️ Strategic Planner (Smart)**. The Planner analyzes the request, (re)plans the necessary tasks, assigns `NNN#` IDs, and (re)writes `task_queue.jsonl`. The Planner logs its actions to `task_log.jsonl`.
-    *   *Smaller, Specific Coding/Docs/Test Task:* Informs user and creates a temporary task for the `Strategic Planner` to analyze, define, assign an ID, and integrate into `task_queue.jsonl`.
-    *   The Coordinator waits for the Planner to complete its (re)planning task.
-8.  **Coordinator Executes Plan (Queue Driven & Signal Driven):**
-    *   The `Workflow Coordinator` reads the top task from `task_queue.jsonl`.
-    *   If the queue is empty, the process stops. If a task is present but its `task_id` is malformed, the Coordinator logs a system error and awaits Planner intervention.
-    *   It attempts to delegate the task to the agent specified in the task's `delegation_details.suggested_mode` using the `new_task` tool.
-    *   **If delegation fails** (i.e., the `new_task` tool call is unsuccessful):
-        *   The Coordinator logs a `system_error` to `task_log.jsonl` detailing the delegation failure.
-        *   It informs the user about the failure.
-        *   The task remains at the top of `task_queue.jsonl`, and the Coordinator stops processing this task, awaiting Planner review or other intervention.
-    *   **If delegation succeeds:**
-        *   The Coordinator logs the `task_delegated` event to `task_log.jsonl`, noting the `task_id` and the `delegated_to_mode`.
-        *   It then updates `task_queue.jsonl` by removing the successfully dispatched task from the top of the queue.
-        *   It informs the user that the task (e.g., `task_id` - 'description') has been delegated to the specified agent and is now awaiting completion.
-    *   The designated agent executes the task, potentially creating artifacts (e.g., specs in `.state/specs/`, code changes in `src/`).
-    *   **Crucially:** Upon completion/failure, the agent creates its own state file (`.state/tasks/{taskId}.json`) detailing its status, any outputs (like file references or sub-task proposals), and errors.
-    *   The agent signals completion (or failure) to the platform.
-9.  **Result Processing & Iteration:**
-    *   The `Workflow Coordinator` receives the signal indicating task completion or failure.
-    *   **State File Handling:** It attempts to read the agent's corresponding state file (`.state/tasks/{taskId}.json`).
-        *   **If the state file is missing or unreadable:** The Coordinator logs a `missing_state_file_error` to `task_log.jsonl`, informs the user, and presents options: `[RetryCheck]` (to try reading the file again after a short delay), `[MarkAsFailed]` (to treat the task as failed due to the missing file), `[PlannerInvestigateSystemIssue]` (to delegate analysis of the missing file to the `Strategic Planner`), or `[Abort]`. The workflow proceeds based on user selection.
-        *   **If the state file is read successfully:**
-            *   The Coordinator validates the `taskId` within the state file. If mismatched, it logs a `system_error` and awaits user instruction or manual intervention.
-            *   It extracts the agent's reported status (`Done`, `Failed`, `Error`, etc.), outputs, and any error messages.
-            *   It logs the appropriate event (e.g., `task_completed`, `task_failed`) to `task_log.jsonl`.
-        *   **Handling Agent-Reported Failures:** If the agent's state file indicates a `Failed` or `Error` status (or if the user chose `MarkAsFailed` for a missing state file):
-            *   The Coordinator informs the user of the failure and the reported error message.
-            *   It presents options to the user: `[Retry]` (to re-delegate the same task), `[Skip]` (to ignore the failure and move to the next task), `[PlannerReviewTaskFailure]` (to have the `Strategic Planner` analyze the failure and decide on next steps like creating a refinement task or re-queueing), or `[Abort]`. The workflow proceeds based on user selection.
-        *   **Handling Planner Intervention:** If the user opts for `PlannerInvestigateSystemIssue` (for missing state files) or `PlannerReviewTaskFailure` (for agent-reported failures), the Coordinator creates a temporary task for the `Strategic Planner`. The Planner will then analyze the situation, potentially modify `task_queue.jsonl` (e.g., by adding a refined task, a new investigation task, or re-queueing), and log its actions. The Coordinator awaits the Planner's completion before reassessing the main task queue.
-        *   **Handling Success/Sub-tasks:** If an agent (like `Solution Architect`) successfully completes its task and proposes new sub-tasks in its state file (with `TEMP#...` IDs), a subsequent task for the `Strategic Planner` will handle their integration into `task_queue.jsonl` with final `NNN#...` IDs.
-        *   The Coordinator informs the user of the task completion status or the chosen error handling path.
-        *   If the previous task was successfully completed, skipped, or if a recoverable error path (like retry) was taken that doesn't halt the queue, the cycle repeats with the Coordinator picking the next task from `task_queue.jsonl`.
-10. **Review Artifacts:** Monitor progress via `.state/` subdirectories, individual `.state/tasks/*.json` files, `task_queue.jsonl`, and `task_log.jsonl`.
+4.  **(Optional) Brainstorming:** Activate **💡 Rooroo Idea Sparker** in Roo Code chat for interactive ideation. It can save summaries to `.rooroo/brainstorming/` or as artifacts within a task (`.rooroo/tasks/TASK_ID/artifacts/rooroo-idea-sparker/`) if directed by the `Rooroo Navigator` or `rooroo-planner` as part of a task.
+5.  **Activate Navigator:** Select **🧭 Rooroo Navigator** in Roo Code chat.
+6.  **State Your Goal:** Describe your project or task to the Navigator.
+7.  **Navigator Triage & Planner Engagement:**
+    *   The `Rooroo Navigator` analyzes your request using its triage logic.
+    *   *Complex Goal/New Project/Significant Change:* Informs you and prepares a message for the **🗓️ Rooroo Planner**. It invokes the Planner using `new_task` with a `ROO#PLAN_` task ID and a path to a `context.md` it creates for the Planner.
+    *   The `rooroo-planner` analyzes the request (from its `context.md`), (re)plans the necessary sub-tasks, assigns `ROO#SUB_` IDs, creates `.rooroo/tasks/SUB_TASK_ID/context.md` files for each sub-task, and generates an overview plan document (e.g., in `.rooroo/plans/`).
+    *   The Planner returns its `PlannerOutput` JSON envelope to the Navigator (typically via the user relaying the output from the `attempt_completion` call from the Planner agent's turn). This envelope contains the `queue_tasks_json_lines` for the sub-tasks and a summary message.
+    *   The Navigator processes this envelope, adds the sub-tasks to `.rooroo/queue.jsonl`, logs the event using `SafeLogEvent`, and informs you.
+    *   *Simple Task:* If the Navigator deems the task simple enough to handle directly or delegate to a single expert without extensive planning, it may create a `ROO#TEMP_` task, write its `context.md`, and dispatch it.
+8.  **Navigator Executes Plan (Queue Driven & Envelope Driven):**
+    *   The `Rooroo Navigator` reads the top task from `.rooroo/queue.jsonl`.
+    *   If the queue is empty, it informs you and awaits further instruction (Phase 4).
+    *   It prepares a message for the sub-agent (specified in the task's `suggested_mode`), including the `ROO#` `taskId`, `context_file_path` (e.g., `.rooroo/tasks/TASK_ID/context.md`), and the `goal_for_expert`.
+    *   It invokes the designated Rooroo expert agent (e.g., `rooroo-developer`) using `new_task`.
+    *   The expert agent executes the task, reading its briefing from the `context.md` file and creating artifacts in its designated path: `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
+    *   **Crucially:** Upon completion, failure, or needing clarification, the agent returns its entire output as a structured JSON **Output Envelope** directly to the Navigator (typically via the user relaying the output from the `attempt_completion` call from the agent's turn). This envelope includes `status`, `message`, `output_artifact_paths`, and an optional `clarification_question`.
+9.  **Result Processing & Iteration (Navigator - Phase 3 of its logic):**
+    *   The `Rooroo Navigator` receives and parses the expert's JSON Output Envelope.
+    *   **If `status` is `"NeedsClarification"`:**
+        *   The Navigator presents the agent's question to you using `ask_followup_question`.
+        *   Your response is relayed back to the expert agent for resumption (Navigator prepares a RESUME_TASK message and calls `new_task` for the same agent).
+    *   **If `status` is `"Done"` or `"Failed"`:**
+        *   The Navigator logs the event (e.g., `EXPERT_REPORT`) using its `SafeLogEvent` procedure to `.rooroo/logs/activity.jsonl`.
+        *   It updates `.rooroo/queue.jsonl` by removing the processed task (by writing the remaining queue content back to the file).
+        *   It informs you of the outcome, including links to any artifacts.
+        *   **Handling Agent-Reported Failures:** If status is `"Failed"`, the Navigator will inform you and guide you to Phase 4 for a decision (e.g., retry, skip, ask Planner to review).
+    *   If the queue has more tasks and the previous task was `"Done"`, the cycle repeats (Navigator proceeds to Phase 2 to dispatch the next task).
+10. **Review Artifacts:** Monitor progress via `.rooroo/` subdirectories, `.rooroo/queue.jsonl`, and `.rooroo/logs/activity.jsonl`. Artifacts are found in `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
 
 ### Workflow Diagram
 
 ```text
 +----------------------------------------------------------------------+ Phase 0: Optional Brainstorming +----------------------------------------------------------------------+
 
-[User Initiates Brainstorming] -> [💡 Idea Sparker (Smart)] <-> [User] -> [Creates Optional Output in .state/brainstorming/]
+[User Initiates Brainstorming with 💡 Rooroo Idea Sparker]
+(Can be tasked by Navigator/Planner as part of a ROO# task)
 
-+----------------------------------------------------------------------+ Phase 1: User Interaction & Triage (Coordinator) +----------------------------------------------------------------------+
++----------------------------------------------------------------------+ Phase 1: User Interaction & Task Triage (Navigator) +----------------------------------------------------------------------+
 
-[User Input (Goal/Request)] -> [🚦 Workflow Coordinator (Cheap)] -> {Triage}
+[User Input (Goal/Request)] -> [🧭 Rooroo Navigator] -> {Triage}
     |
-    |--- (New Project/Goal/Major Change/New Work Item) --> [Coordinator creates TEMP#plan#... task in task_queue.jsonl for Planner]
+    |--- (Complex Work) --> [Navigator informs User, creates ROO#PLAN_ task, writes context.md for Planner]
+    |                                | (Navigator calls `new_task` (mode: 'rooroo-planner'))
+    |                                v
+    |      [Planner returns JSON Output Envelope (PlannerOutput) with queue_tasks_json_lines -> Navigator processes, adds to .rooroo/queue.jsonl, logs, informs User]
     |
-    |--- (Status Request) --> [Coordinator Reads task_queue.jsonl & task_log.jsonl, Summarizes]
+    |--- (Simple Task) --> [Navigator creates ROO#TEMP_ task, writes context.md, calls `new_task` for target Rooroo expert]
+    |                                | (Expert returns JSON Output Envelope -> Navigator processes, logs, informs User)
     |
-    |--- ("Proceed"/"Run Next") --> [Coordinator proceeds to Phase 2]
+    |--- (Status Request) --> [Navigator Reads .rooroo/logs/activity.jsonl, Summarizes for User]
     |
-    +--- (Ambiguous) ---------> [Coordinator Asks Clarification]
+    +--- (User says "Proceed" or task completes successfully and queue is not empty) --> [Navigator proceeds to Phase 2]
+    |
+    +--- (Queue empty or decision needed) --> [Navigator proceeds to Phase 4]
 
-+----------------------------------------------------------------------+ Phase 1.5: Planning & Queue Management (Planner) +----------------------------------------------------------------------+
++----------------------------------------------------------------------+ Phase 2: Queued Task Dispatch (Navigator) +----------------------------------------------------------------------+
 
-[Planner consumes TEMP#plan#... task from task_queue.jsonl]
-    |                                                       
-    v                                                       
-[🏛️ Strategic Planner (Smart)] -> [Analyzes Request/Sub-tasks/Failures] -> [Creates/Updates/Modifies task_queue.jsonl with NNN# tasks]
-    |                                                       
-    +--> [Logs planning actions to task_log.jsonl]
-    |                                                       
-    +--> [Signals its own TEMP#plan#... task completion]
-
-+----------------------------------------------------------------------+ Phase 2: Task Dispatch & Execution Cycle (Coordinator & Agents) +----------------------------------------------------------------------+
-
-[Coordinator checks task_queue.jsonl] --(Not Empty)--> [Coordinator Reads Top Task]
+[Navigator checks .rooroo/queue.jsonl] --(Not Empty)--> [Navigator Reads Top Task (gets ROO# taskId, suggested_mode, context_file_path, goal_for_expert)]
     |                                                                     |
    (Empty)                                                                v
-    |                                         [Coordinator Logs Delegation to task_log.jsonl]
-    v                                                                     |
-[Process Ends or Awaits New Plan]           [Coordinator Updates task_queue.jsonl (removes top task)]
-                                                                          |
+    |                                         [Navigator prepares message for Rooroo Expert (COMMAND: EXECUTE_TASK, ROO# TASK_ID, CONTEXT_FILE, GOAL)]
+    v                                                                     | (Navigator calls `new_task` (mode: suggested_mode))
+[Navigator informs User queue is empty, moves to Phase 4]                 v
+                                                      [Rooroo Expert Executes Task (reads .rooroo/tasks/TASK_ID/context.md, creates artifacts in .rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/)]
+                                                                          | (Expert returns JSON Output Envelope to Navigator)
                                                                           v
-                                          [Coordinator Delegates NNN# Task to Suggested Agent]
-                                                                          |
-                                                                          v
-                                                      [Agent Executes Task] -> [Creates Artifacts]
-                                                                          |
-                                          [Agent Creates .state/tasks/{taskId}.json] -> [Agent Signals Completion]
-                                                                          |
-                                                                          v
-                                          [Coordinator Reads Agent's .state/tasks/{taskId}.json]
-                                                                          |
-                                                                          v
-                                          [Coordinator Logs Completion/Failure to task_log.jsonl] -> [Inform User]
-                                                                          |
-                                                                          +---- (Loop back to Read task_queue.jsonl for next task)
+                                          [Navigator Parses Envelope (Proceed to Phase 3)]
+
++----------------------------------------------------------------------+ Phase 3: Rooroo Expert Report Processing (Navigator) +----------------------------------------------------------------------+
+
+[Navigator receives Rooroo Expert JSON Output Envelope]
+    |
+    |--- (`status: "NeedsClarification"`) --> [Navigator uses `ask_followup_question` with User] --> [User Response] --> [Navigator relays to Expert for RESUME_TASK] --> (Expert Resumes, returns new Envelope, loop to Phase 3)
+    |
+    |--- (`status: "Done"` or `"Failed"`) --> [Navigator logs to .rooroo/logs/activity.jsonl via SafeLogEvent]
+    |                                                  |
+    |                                                  +-- [Navigator updates .rooroo/queue.jsonl (removes processed task)]
+    |                                                  |
+    |                                                  +-- (Navigator informs User of outcome, linking artifacts)
+    |                                                  |
+    |                                                  +-- (If "Failed") --> [Navigator informs User, moves to Phase 4 for decision]
+    |                                                  |
+    |                                                  +-- (If "Done" & queue has tasks) --> [Loop to Phase 2 for next task]
+    |                                                  |
+    |                                                  +-- (If "Done" & queue empty) --> [Navigator informs User, moves to Phase 4]
+
++----------------------------------------------------------------------+ Phase 4: User Decision Point (Navigator) +----------------------------------------------------------------------+
+
+[Navigator reaches decision point (e.g., plan ready, task failed, queue empty, clarification needed)]
+    |
+    v
+[Navigator uses `ask_followup_question` to prompt User for next action (e.g., "Proceed with queue?", "How to handle failure?", "New goal?")]
+    |
+    v
+[Based on User choice, loop to appropriate Phase or await new input]
 ```
 
 ## 🤖 The Agent Team & Cost Optimization
 
-`rooroo` uses specialized agents, allowing for cost optimization by assigning appropriate LLM tiers:
+`rooroo` v0.5.0 uses specialized Rooroo agents, allowing for cost optimization by assigning appropriate LLM tiers. All agents now interact with the `Rooroo Navigator` via standardized JSON Output Envelopes and use the `.rooroo/` file structure.
 
-*   **🚦 Workflow Coordinator (⚡ Cheap/Fast Recommended):** Primary interface, rule-based triage (delegating planning/integration to Planner), consumes tasks from `task_queue.jsonl`, delegates to agents, reads/processes agent state files, logs all its key actions to `task_log.jsonl`. Features enhanced interactive error handling with the user for missing agent state files and agent-reported task failures. Includes logic to pre-fetch original task details from logs for more reliable retry operations.
-*   **🏛️ Strategic Planner (🧠 Smart/Expensive Recommended):** Sole authority for creating and managing `task_queue.jsonl`. Decomposes goals, integrates new tasks/sub-tasks, assigns all final `NNN#` IDs, manages error handling and refinement strategies by modifying the queue. Pays closer attention to `error_message` and structured `error_details` from failed tasks and can instruct the Solution Architect to re-plan tasks if Coder Monk fails due to insufficient detail.
-*   **📐 Solution Architect (🧠 Smart/Expensive Recommended):** Creates technical specs (e.g., in `docs/specs/`), and is responsible for decomposing higher-level tasks into *cohesive functional units* with *extremely granular, unambiguous, step-by-step instructions* for `coder-monk`. Adds these detailed sub-tasks to the *front* of `task_queue.jsonl`. Handles refinement tasks assigned by the Planner. Creates its own task state file (`.state/tasks/{taskId}.json`), including optional structured `error_details`.
-*   **🎨 UX Specialist (🧠 Smart/Expensive Recommended):** Designs UI/UX, creating artifacts such as wireframes, prototypes, or links to cloud design tools. Outputs are typically stored in `.state/design/` or referenced from Markdown files within that directory. Creates its own task state file, including optional structured `error_details`.
-*   **🛡️ Guardian Validator (⚡ Cheap/Fast Recommended):** Executes tests/validation. Creates reports (`.state/reports/`) and its own task state file, including optional structured `error_details`.
-*   **✍️ DocuCrafter (⚡ Cheap/Fast Recommended):** Generates/updates documentation. This can be in-code documentation (e.g., docstrings in `src/` files) or external documentation (e.g., Markdown files in `docs/`). For complex changes, it may propose documentation in `.state/docs_proposals/`. Creates its own task state file, including optional structured `error_details`.
-*   **🧘‍♂️ Coder Monk (Custom / Varies):** Executes coding/debugging tasks on workspace files (e.g., in `src/`), relying on clear specifications and file paths provided in its task `context`. Attempts a round of self-correction using provided lint/build commands if available. **Signals need for refinement** if specs are insufficient via its state file, which includes detailed `notes` on assumptions and self-correction attempts, and optional structured `error_details`. Model tier depends on complexity.
-*   **💡 Idea Sparker (🧠 Smart/Expensive Recommended):** Interactive brainstorming partner, operates conversationally outside the main workflow.
+*   **🧭 Rooroo Navigator (⚡ Cheap/Fast Recommended):** Your friendly primary interface and project guide. Manages user interaction, triages requests (delegating complex work to `rooroo-planner`, simple tasks directly using `ROO#TEMP_` IDs), dispatches tasks from `.rooroo/queue.jsonl` by invoking other Rooroo experts, processes their JSON "Output Envelope" responses, logs events to `.rooroo/logs/activity.jsonl` (using its `SafeLogEvent` procedure), and handles user decisions, especially for failures or when the queue is empty, using `ask_followup_question`.
+*   **🗓️ Rooroo Planner (🧠 Smart/Expensive Recommended):** (Formerly Strategic Planner) Receives directives from the Navigator (via a `ROO#PLAN_` task and `context.md`). Designs project plans, assigns `ROO#SUB_` task IDs to sub-tasks. Crucially, creates detailed context Markdown files for each sub-task in `.rooroo/tasks/SUB_TASK_ID/context.md` and a plan overview document. Reports back to the Navigator via a JSON `PlannerOutput` envelope containing `queue_tasks_json_lines`.
+*   **🧑‍💻 Rooroo Developer (Custom / Varies):** (Formerly Coder Monk) Receives `ROO#` task ID, `context_file_path`, and `goal` from the Navigator. Executes coding tasks based on its `context.md`, creating/modifying files. Artifacts are stored in `.rooroo/tasks/TASK_ID/artifacts/rooroo-developer/` for review before wider application if not modifying project files directly. Reports back via a JSON Output Envelope.
+*   **📊 Rooroo Analyzer (⚡ Cheap/Fast Recommended):** Receives `ROO#` task ID, `context_file_path`, and `goal`. Performs analysis based on `context.md`. Generates reports/findings in `.rooroo/tasks/TASK_ID/artifacts/rooroo-analyzer/`. Reports back via a JSON Output Envelope.
+*   **✍️ Rooroo Documenter (⚡ Cheap/Fast Recommended):** (Formerly DocuCrafter) Receives `ROO#` task ID, `context_file_path`, and `goal`. Creates/updates documentation based on `context.md`. Artifacts (new docs or references to modified project docs) are stored/linked from `.rooroo/tasks/TASK_ID/artifacts/rooroo-documenter/`. Reports back via a JSON Output Envelope.
+*   **💡 Rooroo Idea Sparker (🧠 Smart/Expensive Recommended):** Can be invoked interactively by the user or as part of an automated task by the Navigator/Planner (receiving `ROO#` task ID and `context_file_path`). Creates brainstorming artifacts in `.rooroo/tasks/TASK_ID/artifacts/rooroo-idea-sparker/` or `.rooroo/brainstorming/`. Reports back via a JSON Output Envelope when tasked as part of an automated flow.
+
+*Note: The roles of Solution Architect, UX Specialist, and Guardian Validator from previous versions are implicitly covered by the capabilities of the Rooroo Planner to define detailed tasks and the Rooroo Developer/Analyzer/Documenter to execute specialized aspects. If more distinct specialist roles are needed, new Rooroo agents can be defined following the v0.5.0 patterns.*
 
 *Configure the underlying LLM for each agent mode (if supported) to balance cost and capability.*
 
-## 📁 Directory Structure
+## 📁 Directory Structure (v0.5.0)
 
 ```
 <Project Root>/
-├── .state/                   # Internal state managed by workflow
-│   ├── brainstorming/        # Output from Idea Sparker (Optional)
-│   ├── tasks/                # Individual task state files (CREATED by agents)
-│   │   ├── 010#chore#setup_project.json
+├── .rooroo/                  # Core rooroo operational directory
+│   ├── queue.jsonl           # Pending Tasks (JSON objects, one per line, ROO# IDs)
+│   ├── logs/
+│   │   └── activity.jsonl    # Activity Log (JSON objects, one per line, written by Navigator)
+│   ├── tasks/                # Directory for all task-specific data
+│   │   ├── ROO#PLAN_20240101120000_initial_project/ # Example Planner Task Directory
+│   │   │   └── context.md      # Briefing FOR the Planner for this planning task
+│   │   ├── ROO#SUB_initial_project_S001/ # Example Sub-Task Directory (ROO#SUB_... ID from Planner)
+│   │   │   ├── context.md      # Task briefing FOR the expert (Created by Rooroo Planner)
+│   │   │   └── artifacts/      # Expert-specific work products
+│   │   │       ├── rooroo-developer/
+│   │   │       │   └── feature_component.py
+│   │   │       └── rooroo-analyzer/
+│   │   │           └── data_analysis_report.md
+│   │   ├── ROO#TEMP_20240101130000_fix_login/ # Example Temp Task Directory (ROO#TEMP_... ID from Navigator)
+│   │   │   ├── context.md      # Task briefing FOR the expert (Created by Navigator for simple task)
+│   │   │   └── artifacts/
+│   │   │       └── rooroo-developer/
+│   │   │           └── login_fix.diff
 │   │   └── ...
-│   ├── design/               # Output from UX Specialist
-│   ├── docs_proposals/       # Proposed documentation changes by DocuCrafter
-│   └── reports/              # Output from Guardian Validator
+│   ├── plans/                # Optional: High-level plan overview documents from Rooroo Planner
+│   │   └── ROO#PLAN_20240101120000_initial_project_plan_overview.md
+│   └── brainstorming/        # Optional: Summaries from Rooroo Idea Sparker sessions
+│       └── brainstorm_summary_ROO#IDEA_20240101140000.md
 │
-├── docs/                     # Project documentation
-│   ├── specs/                # Technical specifications from Solution Architect
-│   └── ...                   # Other documents generated by DocuCrafter (e.g., user_guide.md)
-│
-├── task_queue.jsonl          # Definitive task queue (Managed by Strategic Planner, Consumed by Coordinator)
-├── task_log.jsonl            # Append-only log of key workflow events (Written by Coordinator & Planner)
-│
-└── src/                      # Example source code directory (Modified by Coder Monk)
+└── src/                      # Example source code directory (Potentially modified by Rooroo Developer)
     └── ...
 ```
 
-## 📊 Core Data Files
+## 📊 Core Data Files (v0.5.0)
 
-### `task_queue.jsonl`
+### `.rooroo/queue.jsonl`
 
-This file contains the ordered list of tasks to be executed. Each line is a JSON object representing one task. The `Strategic Planner` is responsible for its content and structure.
+This file contains the ordered list of tasks to be executed. Each line is a JSON object representing one task. The `rooroo-planner` is responsible for defining the sub-tasks that go here, and the `Rooroo Navigator` consumes it. The Navigator may also add `ROO#TEMP_` tasks for simple, direct actions.
 
-Example task line structure (defined by Planner):
+Example task line structure (defined by `rooroo-planner` for sub-tasks in the queue):
 ```json
-{"task_id": "010#chore#initial_setup", "delegation_details": {"description": "Set up the initial project structure.", "suggested_mode": "coder-monk", "context": {}, "acceptance_criteria": "Project directory created with basic files."}, "dependencies_original": [], "priority": 10, "added_to_queue_at": "2024-07-25T10:00:00Z"}
+{"taskId": "ROO#SUB_parent_S001_setup_database", "parentTaskId": "ROO#PLAN_project_init_123", "suggested_mode": "rooroo-developer", "context_file_path": ".rooroo/tasks/ROO#SUB_parent_S001_setup_database/context.md", "goal_for_expert": "Set up the initial database schema as per specs in context."}
+```
+Example task line structure (defined by `Rooroo Navigator` for `ROO#TEMP_` tasks):
+```json
+{"taskId": "ROO#TEMP_20240101130000_update_readme", "suggested_mode": "rooroo-documenter", "context_file_path": ".rooroo/tasks/ROO#TEMP_20240101130000_update_readme/context.md", "goal_for_expert": "Update the README.md with the latest version number and features."}
 ```
 Key fields per task object:
-*   `task_id`: Unique identifier (`NNN#type#subject` format), assigned by the `Strategic Planner`.
-*   `delegation_details`: Object containing information for the agent executing the task, including:
-    *   `description`: What needs to be done.
-    *   `suggested_mode`: The agent mode the Planner suggests for this task.
-    *   `context`: Any additional information or data required for the task.
-    *   `acceptance_criteria`: How to determine if the task is successfully completed.
-*   `dependencies_original`: Array of `task_id`s that this task depends on (for Planner's reference; execution order is primarily dictated by queue order).
-*   `priority`: A number indicating task priority (for Planner's reference in ordering).
-*   `added_to_queue_at`: ISO 8601 timestamp of when the task was added/last significantly updated in the queue by the Planner.
+*   `taskId`: Unique identifier (`ROO#...` format).
+*   `parentTaskId`: (For sub-tasks) The ID of the parent planning task.
+*   `suggested_mode`: The Rooroo expert agent mode suggested for this task, which the `Rooroo Navigator` uses for delegation (e.g., `rooroo-developer`, `rooroo-analyzer`).
+*   `context_file_path`: Path within the `.rooroo/tasks/TASK_ID/` structure to the Markdown file containing the detailed task briefing.
+*   `goal_for_expert`: A clear, actionable goal for the assigned expert for this specific task.
 
-### `task_log.jsonl`
+### `.rooroo/logs/activity.jsonl`
 
-This append-only file records key events in the workflow. Each line is a JSON object representing one log entry. Both the `Workflow Coordinator` and `Strategic Planner` write to this file.
+This append-only file records key events in the workflow. Each line is a JSON object representing one log entry. The `Rooroo Navigator` is primarily responsible for writing to this file using its `SafeLogEvent` internal procedure.
 
-Example log entry structure:
+Example log entry structure (simplified, actual structure defined in Navigator's directives):
 ```json
-{"log_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef", "timestamp": "2024-07-25T10:00:05Z", "event_type": "task_delegated", "task_id": "010#chore#initial_setup", "details": {"delegated_to_mode": "coder-monk"}, "actor_mode": "workflow-coordinator"}
-{"log_id": "b2c3d4e5-f6a7-8901-2345-67890abcdef0", "timestamp": "2024-07-25T10:05:00Z", "event_type": "task_completed", "task_id": "010#chore#initial_setup", "details": {"agent_status_reported": "Done", "error_message": null, "agent_state_file_ref": ".state/tasks/010#chore#initial_setup.json", "output_references": ["src/main.py"]}, "actor_mode": "workflow-coordinator"}
-{"log_id": "c3d4e5f6-a7b8-9012-3456-7890abcdef01", "timestamp": "2024-07-25T09:55:00Z", "event_type": "plan_updated", "task_id": "PROJECT_GOAL_INITIAL_PLAN", "details": {"description": "Initial plan created for new web service goal", "tasks_added_count": 5}, "actor_mode": "strategic-planner"}
+{"timestamp": "2024-07-25T10:00:05Z", "agent_slug": "rooroo-navigator", "task_id": "ROO#SUB_parent_S001_setup_database", "event_type": "QUEUE_DISPATCH", "details": "Dispatching to rooroo-developer with goal: Set up the initial database schema..."}
+{"timestamp": "2024-07-25T10:05:00Z", "agent_slug": "rooroo-developer", "task_id": "ROO#SUB_parent_S001_setup_database", "event_type": "EXPERT_REPORT", "details": "Status: Done. Database schema created.", "output_references": [".rooroo/tasks/ROO#SUB_parent_S001_setup_database/artifacts/rooroo-developer/schema.sql"]}
+{"timestamp": "2024-07-25T09:55:00Z", "agent_slug": "rooroo-planner", "task_id": "ROO#PLAN_project_init_123", "event_type": "EXPERT_REPORT", "details": "Planning complete. Generated 5 sub-tasks.", "output_references": [".rooroo/plans/ROO#PLAN_project_init_123_plan_overview.md"]}
 ```
-Key fields per log entry:
-*   `log_id`: Unique identifier for the log entry (e.g., UUID).
+Key fields per log entry (will vary by `event_type` as per Navigator's `SafeLogEvent` definition):
 *   `timestamp`: ISO 8601 timestamp of the event.
-*   `event_type`: Type of event (e.g., `task_delegated`, `task_completed`, `task_failed`, `plan_updated`, `task_integrated_into_queue`, `refinement_initiated`, `system_error`, `missing_state_file_error`, `user_request_recheck_state_file`, `user_mark_as_failed_due_to_missing_state_file`, `user_delegate_system_issue_to_planner`, `user_retry_request`, `user_skip_request`, `user_delegate_to_planner_request`, `user_abort_request`).
-*   `task_id`: The `task_id` relevant to this event (can be a specific task ID or a more general identifier for plan-level events).
-*   `details`: An object containing event-specific information.
-*   `actor_mode`: The agent mode that generated this log entry (e.g., `workflow-coordinator`, `strategic-planner`).
+*   `agent_slug`: The Rooroo agent performing or reporting the action.
+*   `task_id`: The `ROO#` task ID related to the event.
+*   `event_type`: Type of event (e.g., `TRIAGE`, `PLAN_REQUEST`, `QUEUE_DISPATCH`, `EXPERT_REPORT`, `USER_DECISION`).
+*   `details`: An object or string containing event-specific information.
+*   `output_references`: Array of paths to relevant artifacts, if any.
 
-Let `rooroo` bring efficient, specialized, and configurable AI orchestration to your development workflow!
+### `.rooroo/tasks/TASK_ID/context.md`
+
+For each task (identified by its `ROO#` ID), a Markdown file is created that serves as the comprehensive briefing for the assigned Rooroo expert.
+*   For `ROO#SUB_` tasks, this is created by the `rooroo-planner`.
+*   For `ROO#TEMP_` tasks, this is created by the `Rooroo Navigator`.
+*   For `ROO#PLAN_` tasks, this is created by the `Rooroo Navigator` as the input *for* the `rooroo-planner`.
+
+It includes:
+*   Detailed description of the task or planning goal.
+*   Specific instructions and requirements.
+*   Acceptance criteria.
+*   Paths to any input artifacts or relevant existing files.
+*   Any other contextual information needed for the agent to perform the work.
+
+The `Rooroo Navigator` passes the path to this `context.md` file to the executing expert or the planner.
+
+Let `rooroo` v0.5.0 bring a more interactive, robust, and organized AI orchestration to your development workflow!
