@@ -1,3 +1,35 @@
+## [v0.5.4] - 2025-05-10
+
+### BREAKING CHANGE & Enhancements
+
+Version 0.5.4 introduces a critical simplification in how expert-generated artifacts are stored, moving them directly into the task folder. It also significantly refines the `Rooroo Navigator`'s operational directives, emphasizing concise user-facing communication and detailing its internal processing logic within extensive `<thinking>` blocks. All Rooroo agent custom instructions have been updated to reflect these changes.
+
+- **Simplified Artifact Storage Path (Critical Change):**
+    - Expert-generated artifacts are now stored directly in the main task folder: `.rooroo/tasks/TASK_ID/` (e.g., `.rooroo/tasks/ROO#DEV123/output.py`, `.rooroo/tasks/ROO#ANA456/analysis_report.md`).
+    - This replaces the previous, more nested structure: `.rooroo/tasks/TASK_ID/artifacts/AGENT_SLUG/`.
+    - This change affects how all expert agents store their outputs and how the `Rooroo Navigator` and `Rooroo Planner` refer to and manage these artifacts in task contexts, logs, and user messages.
+
+- **`Rooroo Navigator` Directive Enhancements:**
+    - **Conciseness & Thinking Process:** Further emphasis on concise user-facing communication. Detailed internal steps, variable states (e.g., `current_task_json_string`, `task_object`), complex logic (like queue parsing, content generation for files), and the explicit values of variables it is working with are now explicitly mandated to be within extensive `<thinking>` blocks. This ensures the Navigator's operational logic is thoroughly documented internally while keeping user interactions brief.
+    - **Path Convention:** Reiteration and reinforcement of the workspace-relative path convention, with Rooroo internal files always prefixed by `.rooroo/`.
+    - **Rooroo File System Description:** Updated in Navigator's instructions to reflect the new direct artifact storage within `.rooroo/tasks/TASK_ID/`.
+    - **Expert Report Format Example:** The example for `output_artifact_paths` in expert reports now reflects the direct artifact storage path (e.g., `.rooroo/tasks/ROO#TASK_ID/artifact.ext` for Rooroo-generated artifacts, alongside user project file paths like `src/user_file.py`).
+    - **Queue Processing (Phase 2):**
+        - The internal logic for parsing `.rooroo/queue.jsonl`, determining the current task, and preparing the remaining queue content is now explicitly detailed using pseudo-code within a `<thinking>` block. This includes deriving variables like `current_task_json_string`, `task_object`, `new_queue_content_for_file`, and `num_remaining_tasks_in_queue`.
+        - The construction of the `message_for_expert` is also detailed within a `<thinking>` block.
+        - User-facing messages are refined for conciseness (e.g., "Processing task: `{task_object.taskId}`. Delegating to `{task_object.suggested_mode}`. {num_remaining_tasks_in_queue} task(s) will remain in queue after this one.").
+    - **Expert Report Processing (Phase 3):**
+        - Clarified input parameters (`task_id`, `expert_mode`, `expert_report_json`, `new_queue_content_after_removal`, `num_remaining_tasks_in_queue`).
+        - User messages listing artifacts now use the simplified, direct paths (e.g., `.rooroo/tasks/TASK_ID/my_artifact.txt`).
+        - The `<thinking>` block for queue update details the content being written (`new_queue_content_after_removal`) and the number of tasks for the `line_count` parameter.
+        - User-facing messages for task completion are updated to reflect the number of remaining tasks and prompt for "Proceed" if applicable.
+    - **Minor Clarifications:** Small updates to `SafeLogEvent` procedure (to include `<thinking>` for log preparation), Phase 1 (Task Triage, e.g., planner's context path, report handling, various `<thinking>` block additions for clarity of internal operations), and Phase 4 (User Decision Point, including more context in the prompt question).
+
+- **Other Agent Directives:**
+    - **`Rooroo Planner`:** Instructions updated to ensure sub-task `context.md` files correctly reference any potential input artifacts from previous tasks using the new direct path (`.rooroo/tasks/PREV_SUB_TASK_ID/artifact.ext`) and that `goal_for_expert` implies outputs from the sub-task (if Rooroo artifacts) will also be stored directly in that sub-task's folder (`.rooroo/tasks/SUB_TASK_ID/`). The Planner must now carefully assign the most appropriate Rooroo expert (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`) for each sub-task's `suggested_mode` field.
+    - **`Rooroo Developer`, `Rooroo Analyzer`, `Rooroo Documenter`:** Instructions updated to save primary output artifacts directly into `.rooroo/tasks/TASK_ID/` (e.g., `.rooroo/tasks/TASK_ID/rooroo-developer_output.log`, `.rooroo/tasks/TASK_ID/analysis_report.md`, `.rooroo/tasks/TASK_ID/your_document_name.md`). The specific FILENAMING rule (prefixing generic names with `agent-slug_` for Developer and Documenter, or ensuring descriptive names for Analyzer) still applies to artifacts placed in this now direct location. Each expert is also instructed to provide concise summary messages in their reports to the Navigator, with details placed in the artifacts themselves.
+    - **`Rooroo Idea Sparker`:** Instructions updated to reinforce path consistency for reading files (e.g., `.rooroo/tasks/ROO#TASK123/analysis_report.md`) and its standard summary saving location in `.rooroo/brainstorming/`.
+
 ## [v0.5.3] - 2025-05-10
 
 ### BREAKING CHANGE
