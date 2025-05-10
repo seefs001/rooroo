@@ -1,3 +1,17 @@
+## [v0.5.3] - 2025-05-10
+
+### BREAKING CHANGE
+
+Version 0.5.3 introduces a significant simplification and standardization of file path handling across all Rooroo agents. These changes are not backward compatible with v0.5.2. All Rooroo agent custom instructions (Navigator, Planner, Developer, Analyzer, Documenter, Idea Sparker) have been updated to v7.0 to implement these critical changes.
+
+- **Unified Workspace-Relative Path Convention:**
+    - **All file paths** (for both user project files and Rooroo internal files) are now **strictly relative to the VS Code workspace root.**
+    - The `{{workspace}}` placeholder has been **completely removed** from all agent directives and path examples.
+    - **User Project File Paths:** Specified directly from the workspace root (e.g., `src/main.js`, `docs/specification.md`).
+    - **Rooroo Internal File Paths:** Also specified from the workspace root, and are always prefixed with `.rooroo/` (e.g., `.rooroo/queue.jsonl`, `.rooroo/tasks/TASK_ID/context.md`).
+    - This unified approach simplifies path management and ensures consistency in how agents interpret and use file paths in tool calls, messages, logs, and artifact listings.
+- **Agent Directives Updated:** All Rooroo agent custom instructions have been revised to v7.0 to enforce and reflect this new path convention. This includes changes to examples, path constructions in operational logic, and file access descriptions.
+
 ## [v0.5.2] - 2025-05-10
 
 ### BREAKING CHANGE
@@ -16,6 +30,7 @@ Version 0.5.2 introduces critical changes to path handling conventions across al
 
 - **Refined `Rooroo Navigator` Persona & Communication Style:**
     - The `Rooroo Navigator`'s communication style is now more direct, formal, and concise, avoiding conversational filler (e.g., "Okay," "Sure," "Let's see"). This aligns with a more focused and professional interaction model.
+
 
 ## [v0.5.1] - 2025-05-09
 Hotfix for invalid groups
