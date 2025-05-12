@@ -1,3 +1,30 @@
+## [v0.5.5] - 2025-05-11
+
+### Enhancements & Robustness
+
+Version 0.5.5 focuses on significantly enhancing the `Rooroo Navigator`'s operational robustness, error handling, and directive clarity. It also refines the personas, core principles, and reporting mechanisms for all Rooroo expert agents.
+
+- **`Rooroo Navigator` Major Enhancements:**
+    - **Improved Operational Robustness:**
+        - **Advanced Logging (`SafeLogEvent`):** Logging now includes event severity levels (`INFO`, `WARN`, `ERROR`, `CRITICAL`) and uses a more robust append-style mechanism for writing to the log file. Error handling for the logging process itself has been improved.
+        - **Critical Error Handling Protocol (`HandleCriticalErrorOrHalt`):** A new, explicit protocol for the Navigator to gracefully halt operations in the event of unrecoverable system-level failures (e.g., persistent queue corruption, critical log system failure).
+        - **Stricter Error Management in Task Processing:** Enhanced error checking throughout all phases (triage, queue processing, expert report handling). Several conditions that previously might have allowed continued operation with a warning now lead to more decisive actions, including stopping specific flows or invoking the critical halt protocol if project integrity is at risk.
+    - **Enhanced Directive Clarity:**
+        - More precise rules regarding the conciseness of final user-facing output and stricter definitions of what content is forbidden (e.g., verbose explanations, internal state dumps).
+        - Introduction of new core principles such as "Evidence-Based Operation" and "Guardian of the Rooroo Protocol."
+        - More detailed procedures for task triage, including clearer handling of ambiguous requests and conditions for automatically proceeding with queued tasks.
+        - Refined logic for queue updates, especially ensuring the queue file is correctly emptied if no tasks remain.
+    - **Refined Expert Report Processing:** Explicit instructions to process `error_details` if provided in expert reports.
+
+- **Expert Agent Refinements (Planner, Developer, Analyzer, Documenter, Idea Sparker):**
+    - **Elaborated Personas & Core Principles:** Each expert agent's role definition, persona, and guiding operational principles have been significantly expanded and clarified, promoting more distinct and sophisticated behaviors.
+        - `Rooroo Planner`: Stronger emphasis on assigning specific, appropriate Rooroo expert modes to sub-tasks.
+        - `Rooroo Developer`: Enhanced engineering principles, including "Clean Code Philosophy," "Robustness," and "Security Awareness."
+        - `Rooroo Analyzer`: More detailed analytical principles like "Hypothesis-Driven Approaches" and "Evidence Supremacy."
+        - `Rooroo Documenter`: Expanded documentation principles focusing on "Accuracy," "Navigability," and "Consistency."
+        - `Rooroo Idea Sparker`: More structured "Core Facilitation Principles" and refined interaction model.
+    - **Improved Expert Reporting:** Directives for `Rooroo Developer`, `Rooroo Analyzer`, and `Rooroo Documenter` now explicitly include the use of an `error_details` field in their JSON reports to the Navigator for conveying technical error information.
+
 ## [v0.5.4] - 2025-05-10
 
 ### BREAKING CHANGE & Enhancements
