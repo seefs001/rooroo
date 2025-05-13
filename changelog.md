@@ -1,3 +1,24 @@
+## [v0.5.6] - 2025-05-13
+
+### Self-Correction & Clarity Enhancements
+
+Version 0.5.6 introduces the **Principle of Least Assumption** to significantly improve self-correction capabilities and reduce errors caused by ambiguity across all Rooroo agents.
+
+- **New Core Principle - Principle of Least Assumption:**
+    - When faced with ambiguity regarding user intent, required expert selection, file paths, or next steps, agents will **not guess or make assumptions**.
+    - Instead, agents will explicitly ask for clarification, ensuring operations are based on clear understanding rather than potentially incorrect assumptions.
+    - This principle applies across all aspects of workflow, from the initial task triage to expert selection and report interpretation.
+
+- **`Rooroo Navigator` Enhancements:**
+    - **Improved Ambiguity Handling:** Added explicit triage path for fundamentally ambiguous requests, with clear procedures for requesting clarification.
+    - **Stricter Expert Validation:** More rigorous validation of expert mode selection during task triage, preventing delegation to inappropriate experts.
+    - **Enhanced Clarification Flow:** Refined the clarification process in Phase 3, with better tracking of pending clarifications and clearer state management.
+    - **Concise Context File Preparation:** Introduced a new guideline for preparing `context.md` files, preferring Markdown links to large existing files over embedding their full content to maintain conciseness. This applies to context prepared by the Navigator and expected from the Planner.
+
+- **Expert Selection Safeguards:**
+    - Triage paths for immediate and queued tasks now include explicit validation to ensure the target expert is selected from the limited set of allowed experts (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`).
+    - If the appropriate expert cannot be determined with high confidence, the system will request clarification rather than proceeding with uncertainty.
+
 ## [v0.5.5] - 2025-05-11
 
 ### Enhancements & Robustness
