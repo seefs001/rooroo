@@ -385,3 +385,14 @@ Version 0.5.0 introduces a fundamental overhaul of the `rooroo` orchestration mo
 ## [v0.0.1] - Initial Release
 - Initial project setup and definition of core agent roles.
 
+## [v0.5.7] - 2025-05-15
+
+### Role Definition Refinements
+
+Version 0.5.7 refines the agent role definitions to be more concise and focused on function rather than specific individuals as inspiration:
+
+- **Enhanced Role Clarity:** Agent role definitions have been refined to focus on capabilities and functions rather than specific named references.
+- **More Concise Descriptions:** The role definitions now provide clearer, more straightforward explanations of each agent's purpose and specialization.
+- **Professional Tone:** The language across all agent definitions has been standardized for a more consistent and professional tone.
+- **Function Over Inspiration:** Definitions now emphasize what each agent does rather than who or what inspired its approach.
+

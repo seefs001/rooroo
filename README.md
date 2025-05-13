@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.5.6** | [Changelog](changelog.md) | [v0.5.0 Details](v0.5.0.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
+**Version: v0.5.7** | [Changelog](changelog.md) | [v0.5.0 Details](v0.5.0.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
 
 `rooroo` provides **minimalist AI orchestration** for software development using **specialist Rooroo agents** within VS Code via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). It employs a lean, coordinated team with distinct planning and execution phases, driven by a **`Rooroo Navigator`-led, Output Envelope-based workflow**. Task management relies on `.rooroo/queue.jsonl`, event logging on `.rooroo/logs/activity.jsonl` (now with event severity), detailed task briefings are provided in `.rooroo/tasks/TASK_ID/context.md`, and agent-produced artifacts are stored directly in `.rooroo/tasks/TASK_ID/`. All file paths are relative to the VS Code workspace root, with Rooroo internal files prefixed by `.rooroo/`.
 
@@ -19,55 +19,58 @@ In the context of this project, the name evokes the idea of an underlying, consi
 
 ## ✨ Key Principles
 
-*   **Minimalism & Specialization:** A small team of Rooroo agents with clear roles, leveraging appropriate LLM tiers. Adherence to the unified workspace-relative path handling system ensures clarity in file operations: all paths are relative to the VS Code workspace root, and Rooroo internal files are prefixed by `.rooroo/`.
-*   **Navigator-Led Orchestration:** An efficient, interactive workflow where the **🧭 Rooroo Navigator (Master Project Orchestrator & Sentinel)** serves as the primary user interface and central coordinator, embodying principles like "Evidence-Based Operation," "Proactive Logging," "Resilience," "Project Integrity," and acting as a "Guardian of Protocol." It also follows the **Principle of Least Assumption**, refusing to guess or make assumptions when faced with ambiguity. It engages the `rooroo-planner` for complex work, dispatches tasks from `.rooroo/queue.jsonl` (paths within are workspace-relative), processes agent responses (structured JSON "Output Envelopes" which must be strictly parsable, now with explicit handling of `error_details`), logs events with severity levels to `.rooroo/logs/activity.jsonl` (paths within are workspace-relative) using its enhanced `SafeLogEvent` procedure, and guides the user through decisions and failures, utilizing a `HandleCriticalErrorOrHalt` protocol for unrecoverable issues. The Navigator employs detailed internal `<thinking>` blocks to manage its complex logic (such as queue parsing, variable state management, and message construction for experts) while maintaining concise user-facing communication. All path references in its operations and instructions adhere to the workspace-relative path convention.
-*   **Planner-Managed Queue & Context:** The `rooroo-planner` (Master Strategist) has sole authority over creating planned tasks for `.rooroo/queue.jsonl` and creates detailed task briefings in `.rooroo/tasks/TASK_ID/context.md` for each sub-task. These contexts and goals clearly use workspace-relative paths for both user project files and Rooroo artifact paths (which start with `.rooroo/` and point directly to artifacts in other task folders, e.g., `.rooroo/tasks/PREVIOUS_TASK_ID/artifact.ext`). The Planner emphasizes clear expert assignment and actionable sub-task goals, adhering to the **Concise Context File Preparation** guideline (preferring Markdown links over embedding large content).
-*   **Output Envelope-Based Communication:** Agents report status, results (including `error_details` where applicable), or ask questions by returning a structured, strictly parsable JSON string "Output Envelope" directly to the `Rooroo Navigator`. All paths within these envelopes are workspace-relative, with Rooroo artifacts referenced by their direct paths within `.rooroo/tasks/TASK_ID/`.
-*   **Structured Artifacts:** All task-related files (context briefings, agent-produced artifacts) are organized within a clear `.rooroo/tasks/TASK_ID/` structure, with paths being workspace-relative.
-*   **Concise Context File Preparation:** When preparing `context.md` files (Navigator for temp/planner tasks, Planner for sub-tasks), agents **prefer linking** to existing code, large documents, or complex data using Markdown (e.g., `Relevant code: [src/module.py](src/module.py)`) rather than embedding full content. Small, critical snippets are acceptable if essential for immediate understanding, but full file embedding should be avoided to keep contexts concise.
-*   **Consistent Task IDs:** All tasks use the `ROO#` prefix (e.g., `ROO#PLAN_...`, `ROO#TEMP_...`, `ROO#SUB_...`) for unique identification throughout the system.
-*   **Cost-Effectiveness:** Targeted use of Smart vs. Cheap LLMs per role.
-*   **Structured Workflow:** Defined roles, artifacts, communication protocols, and line-oriented data files promote clarity and robustness.
-*   **Principle of Least Assumption:** When faced with ambiguity regarding user intent, required expert selection, file paths, or next steps, agents will **not guess or make assumptions**. Instead, they explicitly ask for clarification, ensuring operations are based on clear understanding rather than potentially incorrect assumptions.
+*   **Minimalism & Specialization:** A small team of specialized Rooroo agents uses appropriate LLM tiers. All file paths are workspace-relative, with Rooroo internal files located under the `.rooroo/` prefix.
+*   **Navigator-Led Orchestration:** The **🧭 Rooroo Navigator** acts as the central coordinator and primary user interface. It:
+    *   Engages the `rooroo-planner` for complex tasks.
+    *   Dispatches tasks from `.rooroo/queue.jsonl`.
+    *   Processes structured JSON "Output Envelope" responses from agents (including `error_details`).
+    *   Logs events with severity to `.rooroo/logs/activity.jsonl`.
+    *   Guides users through decisions and failures.
+    *   Uses workspace-relative paths and internal `<thinking>` blocks for complex logic while maintaining concise user communication.
+*   **Planner-Managed Queue & Context:** The `rooroo-planner` creates planned tasks for `.rooroo/queue.jsonl` and detailed `context.md` briefings (in `.rooroo/tasks/TASK_ID/`) for each sub-task. It uses workspace-relative paths, assigns appropriate experts, defines actionable goals, and adheres to the **Concise Context File Preparation** guideline.
+*   **Output Envelope-Based Communication:** Agents report status, results (including `error_details`), or ask questions by returning a structured JSON "Output Envelope" to the Navigator. All paths within envelopes are workspace-relative, referencing artifacts in `.rooroo/tasks/TASK_ID/`.
+*   **Structured Artifacts:** Task-related files (context briefings, agent-produced artifacts) are organized in `.rooroo/tasks/TASK_ID/`, using workspace-relative paths.
+*   **Concise Context File Preparation:** When creating `context.md` files, agents prefer Markdown links to large existing files over embedding their full content. Small, critical snippets are acceptable if essential for immediate understanding.
+*   **Consistent Task IDs:** All tasks use a unique `ROO#` prefix (e.g., `ROO#PLAN_...`, `ROO#TEMP_...`, `ROO#SUB_...`) for system-wide identification.
+*   **Cost-Effectiveness:** Agents leverage appropriate LLM tiers (e.g., Smart vs. Cheap) based on their role and task complexity.
+*   **Structured Workflow:** Defined roles, artifacts, communication protocols, and line-oriented data files ensure clarity and robustness.
+*   **Principle of Least Assumption:** When faced with ambiguity (regarding user intent, expert selection, file paths, or next steps), agents will **not guess or make assumptions**. Instead, they will explicitly ask for clarification to ensure operations are based on clear understanding.
 
 ## 🚀 Get Started & Core Workflow
 
-Follow these steps to use the `rooroo` agent team (v0.5.6+):
+Follow these steps to use the `rooroo` agent team (v0.5.7+):
 
 1.  **Install Roo Code:** Ensure the [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline) is installed.
-2.  **Load Modes:** Ensure your `.roomodes` file (v0.5.6 compatible, defining the `rooroo-...` agents) is in your workspace root.
+2.  **Load Modes:** Ensure your `.roomodes` file (v0.5.7 compatible, defining the `rooroo-...` agents) is in your workspace root.
 3.  **Reload VS Code:** Use `Ctrl+Shift+P` or `Cmd+Shift+P` -> "Developer: Reload Window".
-4.  **(Optional) Brainstorming:** Activate **💡 Rooroo Idea Sparker** in Roo Code chat for interactive ideation. It can save summaries to `.rooroo/brainstorming/` or as artifacts within a task (`.rooroo/tasks/TASK_ID/rooroo-idea-sparker_summary.md`) if directed by the `Rooroo Navigator` or `rooroo-planner` as part of a task.
+4.  **(Optional) Brainstorming:** Use **💡 Rooroo Idea Sparker** for ideation. Summaries can be saved to `.rooroo/brainstorming/` or as task artifacts (`.rooroo/tasks/TASK_ID/rooroo-idea-sparker_summary.md`).
 5.  **Activate Navigator:** Select **🧭 Rooroo Navigator** in Roo Code chat.
 6.  **State Your Goal:** Describe your project or task to the Navigator.
 7.  **Navigator Triage & Planner Engagement:**
-    *   The `Rooroo Navigator` analyzes your request, applying the **Principle of Least Assumption**. It understands that all file references use workspace-relative paths. It utilizes extensive internal `<thinking>` blocks to process information and decide on next steps, ensuring concise communication.
-    *   *Complex Goal/New Project/Significant Change/Uncertainty:* If the goal requires multi-expert orchestration, has complex dependencies, or if the Navigator is uncertain about the best single-expert path, it informs you and delegates to the **🗓️ Rooroo Planner**. It invokes the Planner using `new_task` with a `ROO#PLAN_` task ID and a workspace-relative path to a `context.md` (e.g., `.rooroo/tasks/ROO#PLAN_.../context.md`) it creates, following the **Concise Context File Preparation** guideline (preferring links).
-    *   The `rooroo-planner` analyzes the request, plans sub-tasks, assigns `ROO#SUB_` IDs, creates `.rooroo/tasks/SUB_TASK_ID/context.md` files (workspace-relative path, following concise context guidelines), and generates an overview. The planner assigns the appropriate expert (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`) for each sub-task's `suggested_mode`.
-    *   The Planner returns its `PlannerOutput` JSON envelope to the Navigator.
-    *   The Navigator processes this envelope, adds sub-tasks to `.rooroo/queue.jsonl`, logs the event, and informs you.
-    *   *Simple, High-Certainty Single-Expert Task (Developer, Analyzer, Documenter only):* If the Navigator identifies a **clear, simple task** for **specifically `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`** with high confidence and the user implies immediate execution, it may create a `ROO#TEMP_` task, write its `context.md` (following concise context rules), and dispatch it directly to that expert. **If the required expert is not one of these three, or if there's ambiguity, it will ask for clarification or delegate to the Planner.**
-    *   *Queue Single-Expert Task (Developer, Analyzer, Documenter only):* If a simple task for one of the allowed experts (`developer`, `analyzer`, `documenter`) is identified but queuing is more appropriate (e.g., user wants to backlog it), the Navigator creates the task, context, logs it, and adds it to the queue.
-    *   *Ambiguous Request:* If the user's goal or required expert is unclear, the Navigator will ask for clarification using `ask_followup_question`.
+    *   The `Rooroo Navigator` analyzes your request, applying the **Principle of Least Assumption** and using workspace-relative paths.
+    *   *Complex/Uncertain Tasks:* The Navigator delegates to the **🗓️ Rooroo Planner**.
+        *   The Planner creates sub-tasks (`ROO#SUB_...`), prepares `context.md` for each (following **Concise Context File Preparation** by linking to existing files), and assigns an expert (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`).
+        *   The Navigator adds these sub-tasks to `.rooroo/queue.jsonl` and informs you.
+    *   *Simple, Clear Single-Expert Tasks (for `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter` only):*
+        *   The Navigator may create a `ROO#TEMP_` task for immediate execution or queue a standard task. It prepares `context.md` (concise, linking files).
+        *   If the task is ambiguous or for a different expert, the Navigator will ask for clarification or delegate to the Planner.
+    *   *Ambiguous Requests:* If your goal or the required expert is unclear, the Navigator will ask for clarification.
 8.  **Navigator Executes Plan (Queue Driven & Envelope Driven):**
-    *   The `Rooroo Navigator` reads the top task from `.rooroo/queue.jsonl`. It verifies the `suggested_mode` is valid (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`). This processing is managed internally within `<thinking>` blocks.
-    *   If the queue is empty, it informs you and awaits further instruction (Phase 4).
-    *   It prepares a message for the designated expert (as per `suggested_mode`), including the `ROO#` `taskId`, `context_file_path` (workspace-relative), and `goal_for_expert`.
-    *   It invokes the expert agent using `new_task`.
-    *   The expert agent executes the task, reading its briefing from the `context.md` file. When accessing user project files or Rooroo artifacts, it uses workspace-relative paths. It creates Rooroo-generated artifacts directly in its task folder: `.rooroo/tasks/TASK_ID/`.
-    *   **Crucially:** Upon completion, failure, or needing clarification, the agent returns its entire output as a structured, strictly parsable JSON **Output Envelope** directly to the Navigator. Output artifact paths are workspace-relative.
-9.  **Result Processing & Iteration (Navigator - Phase 3 of its logic):**
-    *   The `Rooroo Navigator` receives and parses the expert's JSON Output Envelope. This parsing and the subsequent logic are managed within internal `<thinking>` blocks.
-    *   **If `status` is `"NeedsClarification"`:**
-        *   The Navigator presents the agent's question to you using `ask_followup_question`.
-        *   Your response is relayed back to the expert agent for resumption.
+    *   The `Rooroo Navigator` processes tasks from `.rooroo/queue.jsonl`. It verifies the `suggested_mode` is one of `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`.
+    *   If the queue is empty, it informs you.
+    *   It dispatches the task to the designated expert with `taskId`, `context_file_path` (workspace-relative), and `goal_for_expert`.
+    *   The expert agent executes the task, reading its `context.md`. It uses workspace-relative paths for all file access and stores Rooroo-generated artifacts in its task folder: `.rooroo/tasks/TASK_ID/`.
+    *   **Crucially:** The expert returns a structured JSON **Output Envelope** to the Navigator upon completion, failure, or if clarification is needed.
+9.  **Result Processing & Iteration:**
+    *   The `Rooroo Navigator` parses the expert's JSON Output Envelope.
+    *   **If `status` is `"NeedsClarification"`:** The Navigator presents the agent's question to you and relays your response back to the expert.
     *   **If `status` is `"Done"` or `"Failed"`:**
-        *   The Navigator logs the event using `SafeLogEvent`.
-        *   It updates `.rooroo/queue.jsonl` by removing the processed task.
-        *   It informs you of the outcome, linking artifacts.
-        *   **Handling Failures:** If status is `"Failed"`, the Navigator informs you and moves to Phase 4 for a decision.
-    *   If the queue has more tasks and the previous task was `"Done"`, the cycle repeats (Navigator proceeds to Phase 2).
-10. **Review Artifacts:** Monitor progress via `.rooroo/` subdirectories, `.rooroo/queue.jsonl`, and `.rooroo/logs/activity.jsonl`. Rooroo-generated artifacts are found directly in `.rooroo/tasks/TASK_ID/`.
+        *   The Navigator logs the event to `.rooroo/logs/activity.jsonl`.
+        *   It removes the processed task from `.rooroo/queue.jsonl`.
+        *   It informs you of the outcome, linking to any artifacts.
+        *   If `"Failed"`, the Navigator awaits your decision on how to proceed.
+    *   If the queue has more tasks and the previous task was `"Done"`, the Navigator processes the next task from the queue (repeats step 8).
+10. **Review Artifacts:** Monitor progress via `.rooroo/queue.jsonl` and `.rooroo/logs/activity.jsonl`. Rooroo-generated artifacts are located in `.rooroo/tasks/TASK_ID/`.
 
 ### Workflow Diagram
 
@@ -140,7 +143,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.6+):
 
 ## 🤖 The Agent Team & Cost Optimization
 
-`rooroo` v0.5.6 uses specialized Rooroo agents. All agents operate under their directives, emphasizing the **Principle of Least Assumption** and **Concise Context File Preparation**. This allows for cost optimization by assigning appropriate LLM tiers.
+`rooroo` v0.5.7 uses specialized Rooroo agents. All agents operate under their directives, emphasizing the **Principle of Least Assumption** and **Concise Context File Preparation**. This allows for cost optimization by assigning appropriate LLM tiers.
 
 *   **🧭 Rooroo Navigator (⚡ Cheap/Fast Recommended):** Your primary interface and project guide, embodying principles like "Evidence-Based Operation," "Proactive Logging," "Resilience," and acting as a "Guardian of Protocol." Critically, it adheres to the **Principle of Least Assumption**, asking for clarification instead of guessing. Manages user interaction with a direct, formal style. Triages requests using structured logic: delegates complex or uncertain work to `rooroo-planner`; handles simple, high-certainty tasks *only* for `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter` directly or via queue (asking for clarification otherwise); asks for clarification on ambiguous goals. Dispatches tasks from `.rooroo/queue.jsonl` (validating `suggested_mode`). Processes agent JSON "Output Envelope" responses. Logs events with severity to `.rooroo/logs/activity.jsonl`. Handles user decisions, especially for failures or ambiguities. Uses internal `<thinking>` blocks for complex logic while maintaining concise user communication. Enforces workspace-relative paths and **Concise Context File Preparation** (preferring links) when creating contexts.
 *   **🗓️ Rooroo Planner (🧠 Smart/Expensive Recommended):** Receives directives from the Navigator. As a "Master Strategist," it decomposes complex goals, emphasizing optimal Rooroo expert assignment (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`). Creates detailed context Markdown files for sub-tasks in `.rooroo/tasks/SUB_TASK_ID/context.md`, following the **Concise Context File Preparation** guideline (preferring Markdown links over embedding large content). Reports back via a JSON `PlannerOutput` envelope containing `queue_tasks_json_lines` (with workspace-relative paths).
@@ -153,7 +156,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.6+):
 
 *Configure the underlying LLM for each agent mode (if supported) to balance cost and capability.*
 
-## 📁 Directory Structure (v0.5.6)
+## 📁 Directory Structure (v0.5.7)
 
 ```
 <Project Root>/
@@ -181,7 +184,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.6+):
     └── ...
 ```
 
-## 📊 Core Data Files (v0.5.6)
+## 📊 Core Data Files (v0.5.7)
 
 ### `.rooroo/queue.jsonl`
 
