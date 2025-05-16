@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.5.7** | [Changelog](changelog.md) | [v0.5.0 Details](v0.5.0.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
+**Version: v0.5.8** | [Changelog](changelog.md) | [v0.5.0 Details](v0.5.0.md) | [v0.4.0 Details](v0.4.0.md) | [v0.3.0 Details](v0.3.0.md) | [v0.2.0 Details](v0.2.0.md) | [v0.1.0 Details](v0.1.0.md)
 
 `rooroo` provides **minimalist AI orchestration** for software development using **specialist Rooroo agents** within VS Code via the [Roo Code extension](https://github.com/RooVetGit/Roo-Code). It employs a lean, coordinated team with distinct planning and execution phases, driven by a **`Rooroo Navigator`-led, Output Envelope-based workflow**. Task management relies on `.rooroo/queue.jsonl`, event logging on `.rooroo/logs/activity.jsonl` (now with event severity), detailed task briefings are provided in `.rooroo/tasks/TASK_ID/context.md`, and agent-produced artifacts are stored directly in `.rooroo/tasks/TASK_ID/`. All file paths are relative to the VS Code workspace root, with Rooroo internal files prefixed by `.rooroo/`.
 
@@ -38,10 +38,10 @@ In the context of this project, the name evokes the idea of an underlying, consi
 
 ## 🚀 Get Started & Core Workflow
 
-Follow these steps to use the `rooroo` agent team (v0.5.7+):
+Follow these steps to use the `rooroo` agent team (v0.5.8+):
 
 1.  **Install Roo Code:** Ensure the [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline) is installed.
-2.  **Load Modes:** Ensure your `.roomodes` file (v0.5.7 compatible, defining the `rooroo-...` agents) is in your workspace root.
+2.  **Load Modes:** Ensure your `.roomodes` file (v0.5.8 compatible, defining the `rooroo-...` agents, now including a `whenToUse` field for clarity) is in your workspace root.
 3.  **Reload VS Code:** Use `Ctrl+Shift+P` or `Cmd+Shift+P` -> "Developer: Reload Window".
 4.  **(Optional) Brainstorming:** Use **💡 Rooroo Idea Sparker** for ideation. Summaries can be saved to `.rooroo/brainstorming/` or as task artifacts (`.rooroo/tasks/TASK_ID/rooroo-idea-sparker_summary.md`).
 5.  **Activate Navigator:** Select **🧭 Rooroo Navigator** in Roo Code chat.
@@ -143,7 +143,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.7+):
 
 ## 🤖 The Agent Team & Cost Optimization
 
-`rooroo` v0.5.7 uses specialized Rooroo agents. All agents operate under their directives, emphasizing the **Principle of Least Assumption** and **Concise Context File Preparation**. This allows for cost optimization by assigning appropriate LLM tiers.
+`rooroo` v0.5.8 uses specialized Rooroo agents. All agents operate under their directives, emphasizing the **Principle of Least Assumption** and **Concise Context File Preparation**. Their definitions in `.roomodes` now include a `whenToUse` field for better role clarity. This allows for cost optimization by assigning appropriate LLM tiers.
 
 *   **🧭 Rooroo Navigator (⚡ Cheap/Fast Recommended):** Your primary interface and project guide, embodying principles like "Evidence-Based Operation," "Proactive Logging," "Resilience," and acting as a "Guardian of Protocol." Critically, it adheres to the **Principle of Least Assumption**, asking for clarification instead of guessing. Manages user interaction with a direct, formal style. Triages requests using structured logic: delegates complex or uncertain work to `rooroo-planner`; handles simple, high-certainty tasks *only* for `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter` directly or via queue (asking for clarification otherwise); asks for clarification on ambiguous goals. Dispatches tasks from `.rooroo/queue.jsonl` (validating `suggested_mode`). Processes agent JSON "Output Envelope" responses. Logs events with severity to `.rooroo/logs/activity.jsonl`. Handles user decisions, especially for failures or ambiguities. Uses internal `<thinking>` blocks for complex logic while maintaining concise user communication. Enforces workspace-relative paths and **Concise Context File Preparation** (preferring links) when creating contexts.
 *   **🗓️ Rooroo Planner (🧠 Smart/Expensive Recommended):** Receives directives from the Navigator. As a "Master Strategist," it decomposes complex goals, emphasizing optimal Rooroo expert assignment (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`). Creates detailed context Markdown files for sub-tasks in `.rooroo/tasks/SUB_TASK_ID/context.md`, following the **Concise Context File Preparation** guideline (preferring Markdown links over embedding large content). Reports back via a JSON `PlannerOutput` envelope containing `queue_tasks_json_lines` (with workspace-relative paths).
@@ -156,7 +156,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.7+):
 
 *Configure the underlying LLM for each agent mode (if supported) to balance cost and capability.*
 
-## 📁 Directory Structure (v0.5.7)
+## 📁 Directory Structure (v0.5.8)
 
 ```
 <Project Root>/
@@ -184,7 +184,7 @@ Follow these steps to use the `rooroo` agent team (v0.5.7+):
     └── ...
 ```
 
-## 📊 Core Data Files (v0.5.7)
+## 📊 Core Data Files (v0.5.8)
 
 ### `.rooroo/queue.jsonl`
 

@@ -1,3 +1,8 @@
+## [v0.5.8] - 2025-05-16
+
+### Agent Definition Enhancements
+
+- **Added `whenToUse` Field:** Introduced a `whenToUse` field to all Rooroo agent definitions within the `.roomodes` file. This field provides a concise description of when each agent mode is most appropriately used, aiding users in selecting the correct Rooroo expert for their tasks. This change enhances the clarity and usability of the Rooroo agent system.
 ## [v0.5.6] - 2025-05-13
 
 ### Self-Correction & Clarity Enhancements
