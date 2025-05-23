@@ -1,3 +1,26 @@
+## [v0.5.10] - 2025-05-23
+### Agent Logic Enhancements & Protocol Refinements
+
+This version focuses on enhancing the precision and robustness of the `Rooroo Navigator` and refining `Rooroo Planner` capabilities.
+
+- **`Rooroo Navigator` Enhancements:**
+    - **Communication Precision:** Further emphasis on extremely concise user-facing messages (typically 1-2 sentences) followed by at most one tool call. Explicitly forbids verbose internal reasoning in final outputs.
+    - **Stricter Context File Preparation:** Reinforced the "LINK, DON'T EMBED" rule for `context.md` files. Agents must prioritize linking to existing code, large documents, or complex data, with only very small, critical snippets being permissible if absolutely essential for immediate understanding.
+    - **Refined Task Triage (Phase 1):**
+        - Planning (Triage D): More explicit triggers (explicit request, multi-expert, high complexity/uncertainty). Planner's "Advice" output is handled more granularly; if actionable for Developer, Analyzer, or Documenter, Navigator can prompt for immediate execution or queuing.
+        - Immediate & Queued Single Expert Tasks (Triage E & F): Stricter validation mandates that the `TARGET_EXPERT_MODE` **must** be one of `rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`. If the correct expert from this list isn't clear, Navigator will ask for clarification (Triage H).
+    - **Improved Clarification Handling (Phase 3):** When an expert requests clarification for a queued task, the Navigator now re-adds the task to the front of the queue with a `NeedsClarificationInQueue` status to ensure it's not lost.
+    - **Auto-Proceed Logic for Plans:** The condition for auto-proceeding with a plan is now more specific, checking if the next task in the queue shares the same `plan_id` as the completed task.
+    - **Robustness in Queue Processing (Phase 2):** Invalid `suggested_mode` in a queued task (i.e., not Developer, Analyzer, or Documenter) is now handled by removing the problematic task and informing the user, rather than halting the system.
+
+- **`Rooroo Planner` Enhancements:**
+    - **Ambiguous Expert Assignment:** The Planner can now explicitly flag a sub-task where the choice of expert (`rooroo-developer`, `rooroo-analyzer`, or `rooroo-documenter`) is ambiguous by setting `suggested_mode: "AMBIGUOUS_EXPERT_CHOICE"` and providing details for the Navigator to resolve.
+    - **Context File Consistency:** Re-emphasized the "LINK, DON'T EMBED" rule for preparing concise sub-task `context.md` files.
+
+- **General:**
+    - Continued reinforcement of workspace-relative path conventions and critical path rules for artifact storage across all agents.
+    - Minor refinements to other agent directives to align with these principles.
+
 ## [v0.5.9] - 2025-05-22
 ### General Updates
 
