@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.6.0** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
+**Version: v0.6.1** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
 
 `rooroo` is a **minimalist AI orchestration framework** for VS Code, designed to streamline software development using a team of specialized Rooroo agents. It emphasizes a clear, Navigator-led workflow, efficient task management, and robust communication, all while incorporating advanced prompting techniques for enhanced reliability.
 
@@ -37,7 +37,12 @@ Inspired by Buddhist philosophy, "如如" (rú rú) or "Thusness" reflects the i
 
 Using `rooroo` involves these main steps:
 
-1.  **Setup:** Install [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline), load your `.roomodes` (v0.6.0 compatible), and reload VS Code. (Optional: For advanced customization, create a `.roo/rules/` directory and add custom instruction files to tailor agent behavior across your workspace.)
+1.  **Setup:** Install [Roo Code VS Code extension](https://marketplace.visualstudio.com/items?itemName=RooVeterinaryInc.roo-cline).
+    *   Load your `.roomodes` file.
+        *   **For Roo Code v3.18.0 and later:** You can use the YAML format for `.roomodes`.
+        *   **For Roo Code versions earlier than v3.18.0:** You must use the JSON format for `.roomodes` (e.g., `.roomodes.json`).
+    *   Reload VS Code.
+    *   (Optional: For advanced customization, create a `.roo/rules/` directory and add custom instruction files to tailor agent behavior across your workspace.)
 2.  **Initiate:** Select **🧭 Rooroo Navigator** and state your goal.
 3.  **Navigator Triage:** The Navigator assesses your request:
     *   For *complex/uncertain tasks*, it engages the **🗓️ Rooroo Planner** to break it down into sub-tasks with `context.md` briefings. These go into the `.rooroo/queue.jsonl`.

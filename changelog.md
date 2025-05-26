@@ -1,3 +1,32 @@
+## v0.6.1 - 2025-05-26
+
+### `.roomodes` Format Update & Minor Version Bump
+
+- **`.roomodes` File Format:**
+    - The `.roomodes` file, which defines custom agent behaviors, can now be in **YAML format**.
+    - This is supported in **Roo Code VS Code extension version 3.18.0 and later**.
+    - For users with Roo Code versions **earlier than 3.18.0**, the `.roomodes` file **must be in JSON format** (e.g., named `.roomodes.json`).
+- **Tool Usage Standardization & `line_count` for `write_to_file`:**
+    - All Rooroo agent directives (`.roomodes`) have been updated to provide more explicit instructions on *which* tools each expert should use for specific actions (e.g., `read_file`, `codebase_search`, `write_to_file`).
+    - **Critical:** A `line_count` parameter is now consistently required when calling the `write_to_file` tool. This parameter must be accurately calculated by the agent based on the content being written and included in the tool call. This applies to all agents when they write files, including context files, logs, reports, and queue updates.
+- **`Rooroo Navigator` Enhancements:**
+    - **Clarity on Critical Error Handling:** Clarified that `<attempt_completion>` during critical errors signifies a system halt, not task success.
+    - **Internal Reflection (Triage 0.5):** If high uncertainty leads to Triage H (user clarification) or Triage D (Planner escalation), the Navigator will briefly explain this reasoning in the user message.
+    - **Navigator Self-Service (Triage A):** Added specific tool usage examples for common commands (e.g., `read_file` for "show logs" or "read config.json").
+    - **Interaction Refinements:** The XML structure for `<ask_followup_question>` has been standardized with more specific suggested follow-up actions for various scenarios (Planner advice/clarification, expert clarification needs).
+    - **Queue Management:** More consistent use of parameters for `insert_content` (e.g., `line="0"` for prepending) and `write_to_file` (e.g., `create_if_not_exists`, and the mandatory `line_count`) when managing `.rooroo/queue.jsonl`.
+- **`Rooroo Planner` Enhancements:**
+    - Explicitly mentions using `<read_file>` and the `line_count` requirement for `<write_to_file>`.
+    - Sub-task `context.md` files should now include a link back to the main `plan_overview.md`.
+    - Mandates calculation of `line_count` before `<write_to_file>` for context files and plan overviews.
+- **`Rooroo Developer`, `Rooroo Analyzer`, `Rooroo Documenter` Enhancements:**
+    - More explicit guidance on using tools like `<codebase_search>`, `<search_files>`, `<list_code_definition_names>` for understanding context, code, or data.
+    - Consistent enforcement of the `line_count` requirement for `<write_to_file>`.
+    - Developer role includes updated preferences for file modification tools and details on potentially running lint/test commands.
+- **`Rooroo Idea Sparker` Enhancements:**
+    - Updated to include the `line_count` requirement for saving summaries with `<write_to_file>`.
+    - Minor wording changes in suggested follow-up actions.
+
 ## [v0.6.0] - 2025-05-26
 ### BREAKING CHANGE & Prompting Enhancements
 
@@ -388,7 +417,7 @@ Version 0.5.0 introduces a fundamental overhaul of the `rooroo` orchestration mo
     - Uses strict `NNN:type:subject` format for `taskId`.
     - **Does not** create individual `.state/tasks/{taskId}.json` files.
 - **Agent State Reporting (Breaking Change - Decoupled State):**
-    - All executing agents (`solution-architect`, `ux-specialist`, `guardian-validator`, `docu-crafter`, `coder-monk`) now report completion status, outputs, logs, etc., by **creating/writing their own task state file** (`.state/tasks/{their_taskId}.json`) as their final step.
+    - All executing agents (`solution-architect`, `ux-specialist`, `guardian-validator`, `docu-crafter`) now report completion status, outputs, logs, etc., by **creating/writing their own task state file** (`.state/tasks/{their_taskId}.json`) as their final step.
     - Agents **DO NOT** modify `project_overview.json` directly.
     - `solution-architect` output includes `planned_subtasks` in its state file.
     - `guardian-validator` output includes `validation_result_for_target` (with `target_task_id`) in its state file.
