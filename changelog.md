@@ -1,3 +1,20 @@
+## v0.6.2 - 2025-06-14
+
+### Agent Directive Refinements & Robustness
+
+This version introduces several refinements to agent directives for enhanced robustness, clarity, and more precise tool usage.
+
+- **`Rooroo Navigator` Logic Enhancements:**
+    - **Smarter "Proceed" Command:** The `proceed` command (Triage C) now intelligently checks if the task queue is empty before attempting to process, preventing unnecessary actions.
+    - **More Robust Error Handling:** The procedure for handling invalid tasks in the queue (Phase 2, Step 3) now includes an explicit reminder to use the `line_count` parameter when rewriting the queue file, reinforcing tool compliance during error recovery.
+
+- **Specific Tool Guidance for Expert Agents:**
+    - The directives for `rooroo-developer`, `rooroo-analyzer`, and `rooroo-documenter` have been significantly enhanced to provide explicit guidance on which tools to use for contextual understanding.
+    - **Example (Developer):** Agents are now instructed to "Utilize tools like `<read_file>` for specific files, `<codebase_search>` for semantic code understanding, `<search_files>` for regex-based content searches..., and `<list_code_definition_names>` to analyze existing code structure..."
+
+- **Tool Compliance Reinforcement:**
+    - Re-emphasized the mandatory use of the `line_count` parameter for all `<write_to_file>` tool calls across all agent directives, building on the standardization from v0.6.1.
+
 ## v0.6.1 - 2025-05-26
 
 ### `.roomodes` Format Update & Minor Version Bump

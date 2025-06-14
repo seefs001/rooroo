@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.6.1** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
+**Version: v0.6.2** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
 
 `rooroo` is a **minimalist AI orchestration framework** for VS Code, designed to streamline software development using a team of specialized Rooroo agents. It emphasizes a clear, Navigator-led workflow, efficient task management, and robust communication, all while incorporating advanced prompting techniques for enhanced reliability.
 
