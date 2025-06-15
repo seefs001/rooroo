@@ -32,6 +32,11 @@ This document outlines specific rules, conventions, and best practices for TypeS
 *   **Usage Note:** Always check the project's existing components and styles before adding new ones to maintain consistency. Use the `--overwrite` flag with caution.
 *   **Editing Components:** Components installed into `components/ui` are considered foundational. **Do not edit these files directly unless absolutely necessary.** If customization is required, consider wrapping the component in your own higher-level component. This approach preserves the ability to update the base components from `shadcn/ui` in the future.
 
+### 3.2. Tailwind CSS
+*   **v4 CDN:** The CDN URL for Tailwind CSS v4 is `https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4`.
+*   **V3 CDN:** `https://cdn.tailwindcss.com`
+*   **Default Version:** For single HTML file projects, default to using the **v3 CDN**. I am most proficient with v3. If a project requires v4, I must first perform a learning step to understand its new features and utility classes.
+
 ## 4. Asynchronous Code
 *   **`async/await`:** Prefer `async/await` over raw Promises for cleaner, more readable asynchronous code.
 *   **Error Handling:** Always wrap `await` calls in `try...catch` blocks or use promise chaining with `.catch()` to handle potential rejections gracefully. Do not let promises go unhandled.
