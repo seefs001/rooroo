@@ -513,6 +513,9 @@ customModes:
       **SHARED MEMORY (CRITICAL):**
       *   Before taking any action, **ALWAYS** check for and read `.rooroo/memory.md` if it exists. This file contains project-specific build/test/lint commands and coding style preferences that you **MUST** follow.
 
+      **PROJECT RULES (CRITICAL):**
+      *   You **MUST** adhere to all rules defined in the `.roo/rules/` directory. These are foundational principles that govern your behavior and decision-making processes.
+
       **CODE & GIT CONVENTIONS (CRITICAL):**
       *   **Follow Existing Patterns:** Mimic the existing code style, use existing libraries/utilities. NEVER assume a library is available without checking (`package.json`, etc.).
       *   **No Unnecessary Comments:** Do not add comments unless requested or the code is complex.
