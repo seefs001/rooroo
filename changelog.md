@@ -1,3 +1,45 @@
+## v0.6.3 - 2025-06-19
+
+### `Rooroo Idea Sparker` Overhaul: From Brainstorming to Strategic Facilitation
+
+This version introduces a fundamental transformation of the `Rooroo Idea Sparker` agent, evolving it from a general brainstorming partner into a **Strategic Foresight Facilitator**. This change is designed to provide a more structured and actionable process for tackling complex problems and making key decisions before execution.
+
+- **New Role & Persona:** The `Idea Sparker`'s role is redefined from an "Innovation Catalyst" to a "Strategic Foresight Facilitator." It now guides users through a structured process of problem definition, solution exploration, evaluation, and decision-making.
+
+- **Structured Interaction Flow:** The agent now follows a distinct, multi-phase process:
+    1.  **Align & Define:** Crystallizes the problem and success criteria.
+    2.  **Ideate & Explore:** Generates a wide range of potential solutions.
+    3.  **Structure & Evaluate:** Uses frameworks (e.g., Impact vs. Effort) to analyze the proposed solutions.
+    4.  **Decide & Document:** Helps the user make a final decision and creates a comprehensive handoff document.
+
+- **Delegation-Ready "Handoff Document":**
+    - The primary output is no longer a simple brainstorming summary. It is now a detailed **Handoff Document** stored in `.rooroo/brainstorming/`.
+    - This document is structured to serve as a complete briefing package for execution agents (like `rooroo-developer`), containing:
+        - An executive decision summary.
+        - The problem statement and goals.
+        - The evaluation framework used.
+        - Detailed blueprints of the explored solutions.
+        - A comprehensive implementation strategy for the *recommended* solution, including an agent tasking brief.
+
+- **Updated `whenToUse` Guidance:** The `whenToUse` description has been updated to reflect its new purpose: transforming ambitious goals into actionable solution blueprints, making it the ideal choice for making key decisions on large or complex tasks before committing to development.
+
+## v0.6.2 - 2025-06-14
+
+### Agent Directive Refinements & Robustness
+
+This version introduces several refinements to agent directives for enhanced robustness, clarity, and more precise tool usage.
+
+- **`Rooroo Navigator` Logic Enhancements:**
+    - **Smarter "Proceed" Command:** The `proceed` command (Triage C) now intelligently checks if the task queue is empty before attempting to process, preventing unnecessary actions.
+    - **More Robust Error Handling:** The procedure for handling invalid tasks in the queue (Phase 2, Step 3) now includes an explicit reminder to use the `line_count` parameter when rewriting the queue file, reinforcing tool compliance during error recovery.
+
+- **Specific Tool Guidance for Expert Agents:**
+    - The directives for `rooroo-developer`, `rooroo-analyzer`, and `rooroo-documenter` have been significantly enhanced to provide explicit guidance on which tools to use for contextual understanding.
+    - **Example (Developer):** Agents are now instructed to "Utilize tools like `<read_file>` for specific files, `<codebase_search>` for semantic code understanding, `<search_files>` for regex-based content searches..., and `<list_code_definition_names>` to analyze existing code structure..."
+
+- **Tool Compliance Reinforcement:**
+    - Re-emphasized the mandatory use of the `line_count` parameter for all `<write_to_file>` tool calls across all agent directives, building on the standardization from v0.6.1.
+
 ## v0.6.1 - 2025-05-26
 
 ### `.roomodes` Format Update & Minor Version Bump
