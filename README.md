@@ -1,6 +1,6 @@
 # 🚀 rooroo (如如): Minimalist AI Orchestration with Specialist Agents 🚀
 
-**Version: v0.6.2** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
+**Version: v0.6.3** | [Changelog](changelog.md) | [v0.6.0 Details](v0.6.0.md) | [v0.5.0 Details](v0.5.0.md)
 
 `rooroo` is a **minimalist AI orchestration framework** for VS Code, designed to streamline software development using a team of specialized Rooroo agents. It emphasizes a clear, Navigator-led workflow, efficient task management, and robust communication, all while incorporating advanced prompting techniques for enhanced reliability.
 
@@ -17,7 +17,7 @@ Inspired by Buddhist philosophy, "如如" (rú rú) or "Thusness" reflects the i
     *   **🧑‍💻 Rooroo Developer:** Crafts code and UIs.
     *   **📊 Rooroo Analyzer:** Investigates and delivers insights.
     *   **✍️ Rooroo Documenter:** Creates clear documentation.
-    *   **💡 Rooroo Idea Sparker:** Facilitates brainstorming.
+    *   **💡 Rooroo Idea Sparker:** Acts as a Strategic Foresight Facilitator, guiding users through a structured process to explore problems, evaluate solutions, and produce a detailed **Handoff Document**. This document serves as a comprehensive blueprint, ready for delegation to execution agents. Its outputs are stored in `.rooroo/brainstorming/`.
 *   **Structured Workflow & Communication:**
     *   **Task Management:** Uses `.rooroo/queue.jsonl` for pending tasks.
     *   **Detailed Briefings:** Tasks are detailed in `.rooroo/tasks/TASK_ID/context.md`, prioritizing links over embedded content.
@@ -66,7 +66,7 @@ Each Rooroo agent adheres to core principles like the **Principle of Least Assum
 *   **🧑‍💻 Rooroo Developer (Custom / Varies):** Executes coding tasks based on `context.md`. Stores outputs in its task folder or modifies project files.
 *   **📊 Rooroo Analyzer (⚡ Cheap/Fast Recommended):** Performs analysis based on `context.md`. Generates reports in its task folder.
 *   **✍️ Rooroo Documenter (⚡ Cheap/Fast Recommended):** Creates/updates documentation based on `context.md`. Stores outputs in its task folder.
-*   **💡 Rooroo Idea Sparker (🧠 Smart/Expensive Recommended):** Facilitates interactive brainstorming. Summaries can be saved to `.rooroo/brainstorming/` or task folders.
+*   **💡 Rooroo Idea Sparker (🧠 Smart/Expensive Recommended):** Acts as a Strategic Foresight Facilitator, guiding users through a structured process to explore problems, evaluate solutions, and produce a detailed **Handoff Document**. This document serves as a comprehensive blueprint, ready for delegation to execution agents. Its outputs are stored in `.rooroo/brainstorming/`.
 
 *Balance LLM tiers per agent for optimal cost and capability.*
 
