@@ -30,7 +30,7 @@ This document outlines specific rules, conventions, and best practices for TypeS
     bunx --bun shadcn@canary add <component_name> --all --overwrite
     ```
 *   **Usage Note:** Always check the project's existing components and styles before adding new ones to maintain consistency. Use the `--overwrite` flag with caution.
-*   **Editing Components:** Components installed into `components/ui` are considered foundational. **Do not edit these files directly unless absolutely necessary.** If customization is required, consider wrapping the component in your own higher-level component. This approach preserves the ability to update the base components from `shadcn/ui` in the future.
+*   **Editing Components:** Components installed into `components/ui` are considered foundational. **Do not edit these files directly unless absolutely necessary.** If customization is required, consider wrapping the component in your own higher-level component. This approach preserves the ability to update the base components from `shadcn/ui` in the future. All customizations should align with the principles and tokens defined in the official design system: [`08-ROO-Design-AuroraSoftUI.md`](./08-ROO-Design-AuroraSoftUI.md).
 
 ### 3.2. Tailwind CSS
 *   **v4 CDN:** The CDN URL for Tailwind CSS v4 is `https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4`.

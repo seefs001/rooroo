@@ -1,106 +1,112 @@
 
-Default to using Bun instead of Node.js.
+## 1. Core Principle: Bun as the Default Toolchain
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Bun automatically loads .env, so don't use dotenv.
+Default to using Bun as the primary JavaScript runtime, package manager, and test runner.
 
-## APIs
+- **Runtime:** `bun run <file>` instead of `node <file>` or `ts-node <file>`
+- **Package Management:** `bun install` instead of `npm install`, `yarn install`, or `pnpm install`
+- **Script Execution:** `bun run <script>` instead of `npm run <script>`
+- **Testing:** `bun test` instead of `jest` or `vitest`
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+Bun automatically loads `.env` files, so do not use `dotenv`.
 
-## Testing
+## 2. Framework-Specific Context (IMPORTANT)
 
-Use `bun test` to run tests.
+While Bun is the default, its application must be contextualized within the project's primary framework, as defined in [`07-ROO-Project-Structure.md`](./07-ROO-Project-Structure.md).
 
-```ts#index.test.ts
+- **For Next.js Applications (Primary):**
+  - **Use Bun as the executor, not the server.** The development server, building, and routing are managed by Next.js.
+  - **Correct Commands:**
+    - `bun run dev` (to start the Next.js dev server)
+    - `bun run build` (to build the Next.js application)
+    - `bun run start` (to run the production Next.js server)
+  - **DO NOT** use `Bun.serve()` for Next.js projects.
+
+- **For Standalone Scripts or Simple Servers:**
+  - `Bun.serve()` is the preferred API for creating new, simple servers that are not part of the main Next.js application.
+  - This approach is ideal for simple web pages, internal tools, or API endpoints that do not require the complexity of a full framework. It supports HTML imports, allowing for straightforward bundling of TypeScript/JSX and CSS.
+
+    **Example Server (`index.ts`):**
+    ```ts
+    import index from "./index.html"
+
+    Bun.serve({
+      routes: {
+        "/": index,
+        "/api/users/:id": {
+          GET: (req) => {
+            return new Response(JSON.stringify({ id: req.params.id }));
+          },
+        },
+      },
+      // optional websocket support
+      websocket: {
+        open: (ws) => {
+          ws.send("Hello, world!");
+        },
+        message: (ws, message) => {
+          ws.send(message);
+        },
+        close: (ws) => {
+          // handle close
+        }
+      },
+      development: {
+        hmr: true,
+        console: true,
+      }
+    })
+    ```
+
+    **Example HTML (`index.html`):**
+    ```html
+    <html>
+      <body>
+        <h1>Hello, world!</h1>
+        <script type="module" src="./frontend.tsx"></script>
+      </body>
+    </html>
+    ```
+
+    **Example Frontend Component (`frontend.tsx`):**
+    ```tsx
+    import React from "react";
+    import './index.css'; // CSS imports work directly
+    import { createRoot } from "react-dom/client";
+
+    const root = createRoot(document.body);
+
+    export default function Frontend() {
+      return <h1>Hello, world!</h1>;
+    }
+
+    root.render(<Frontend />);
+    ```
+    **To run this example:**
+    ```sh
+    bun --hot ./index.ts
+    ```
+
+## 3. API Preferences
+
+When writing backend services or scripts outside of a framework's conventions:
+
+- **Server:** `Bun.serve()` (replaces Express, Fastify).
+- **Database:** `bun:sqlite` for SQLite, `Bun.sql` for Postgres.
+- **Cache:** `Bun.redis` for Redis.
+- **WebSockets:** Use the built-in `WebSocket` support in `Bun.serve()`.
+- **File I/O:** Prefer `Bun.file()` over `node:fs`.
+- **Shell Commands:** Use `Bun.$` (e.g., `Bun.$`ls -la``) instead of `execa` or `child_process`.
+
+## 4. Testing
+
+Use `bun test` for all new tests.
+
+```ts
+// example.test.ts
 import { test, expect } from "bun:test";
 
-test("hello world", () => {
-  expect(1).toBe(1);
+test("example test", () => {
+  expect(1 + 1).toBe(2);
 });
 ```
-
-## Frontend
-
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
-
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
-```
-
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
-
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
-
-With the following `frontend.tsx`:
-
-```tsx#frontend.tsx
-import React from "react";
-
-// import .css files directly and it works
-import './index.css';
-
-import { createRoot } from "react-dom/client";
-
-const root = createRoot(document.body);
-
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
-
-root.render(<Frontend />);
-```
-
-Then, run index.ts
-
-```sh
-bun --hot ./index.ts
-```
-
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.md`.

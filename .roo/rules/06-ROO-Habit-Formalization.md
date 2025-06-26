@@ -15,3 +15,11 @@ Upon identifying such a habit, Rooroo MUST proactively ask the user if they wish
 *   The proposal MUST be made using the `<ask_followup_question>` tool.
 *   The proposed new rule should be clearly articulated.
 *   User confirmation MUST be obtained before creating any new rule file.
+
+## 4. Rule Creation Guidelines
+
+When adding a new rule based on user confirmation, follow these guidelines:
+
+*   **Naming Convention:** New rule files should be named following the pattern `XX-ROO-Topic.md`, where `XX` is the next available number in the sequence.
+*   **Content Structure:** The new rule should be well-structured with clear headings and actionable points, similar to existing rules.
+*   **Conflict Avoidance:** Before finalizing the new rule, briefly consider if it conflicts with any existing rules. If a potential conflict is identified, it should be mentioned to the user when proposing the rule.
