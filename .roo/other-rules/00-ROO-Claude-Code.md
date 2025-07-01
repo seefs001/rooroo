@@ -1,5 +1,7 @@
 # Claude Code Subagent Rules
 
+> **Note:** claude code is a CLI-based agent tool that allows you to write code and run commands interactively in your terminal. It is designed for developer workflows, enabling you to spawn, manage, and automate code tasks directly from the command line.
+
 ## Basic Spawning
 ```bash
 # Simple execution
