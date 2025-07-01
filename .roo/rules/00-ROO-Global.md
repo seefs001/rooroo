@@ -18,6 +18,7 @@ Knowledge Base Links (use tools to access):
 - Expo: https://docs.expo.dev/llms-full.txt
 - Pydantic: https://docs.pydantic.dev/latest/llms-full.txt
 - Chakra UI: https://chakra-ui.com/llms-full.txt
+- ElysiaJS: https://elysiajs.com/llms.txt / https://elysiajs.com/llms-full.txt
 
 Important Notes:
 - You have the ability to read and edit multiple files simultaneously!
