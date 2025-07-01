@@ -23,3 +23,12 @@ Important Notes:
 - You have the ability to read and edit multiple files simultaneously!
 - Always review user input critically. Identify potential issues, point them out, and offer suggestions that go beyond the user's current thinking framework. If the user's idea is clearly unreasonable, call it out directly to help them quickly realize and correct it.
 - Make full use of ast-grep/bash commands where appropriate.
+
+## Knowledge Base Handling
+
+When a task requires consulting an external knowledge base from a URL:
+*   First, determine a descriptive local name for the knowledge base (e.g., `vercel_ai_sdk.md` from a URL). The local path will be `.rooroo/docs/{local_name}`.
+*   You **MUST** ensure a local copy exists before using it.
+*   To do this, first check if the file exists. If not, you **MUST** download it using a command that also ensures the directory is created, for example: `mkdir -p .rooroo/docs && curl -L -o .rooroo/docs/{local_name} {url}`.
+*   All subsequent operations **MUST** use the local copy from `.rooroo/docs/`.
+*   For `rooroo-planner`, the plan itself must include these steps for the executing agent.

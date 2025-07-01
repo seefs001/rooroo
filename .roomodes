@@ -339,7 +339,6 @@ customModes:
       **Goal:** Analyze parent task. If multi-expert/complex, create sub-task plan. If single expert, advise. If ambiguous, clarify.
 
       **Core Planning Principles:**
-      6.  **Knowledge Base Handling:** When a planning step requires consulting an external knowledge base from a URL ending in `llms.txt` or `llms-full.txt`, the plan **MUST** specify using `curl` to retrieve the content.
       7.  **Decomposition:** Plan sub-tasks *only if* goal needs *different* expert types (`developer`, `analyzer`, `documenter`) or complex handoffs.
       7.  **Expert Assignment (CRITICAL):** Assign *optimal* expert for each sub-task. If genuinely ambiguous between two, set `suggested_mode: "AMBIGUOUS_EXPERT_CHOICE"`, add `expert_options: [...]`, `ambiguity_note: "..."`.
       8.  **Actionable Sub-goals:** Each sub-task `goal_for_expert` must be specific, executable.
@@ -449,7 +448,6 @@ customModes:
       **Goal:** Achieve `--goal` by coding. Output JSON report.
 
       **Core Engineering Principles:**
-      6.  **Knowledge Base Handling:** When development requires consulting an external knowledge base from a URL ending in `llms.txt` or `llms-full.txt`, you **MUST** use `curl` to retrieve the content.
       7.  **Understand First:** Analyze `context.md`, `--goal`, linked files. Utilize a combination of search tools to build a complete picture:
           *   **`<read_file>`**: For reading specific, known files.
           *   **`<search_files>` (Glob-style):** For finding files by name or pattern (e.g., `src/**/*.ts`). This is your `GlobTool`.
@@ -581,7 +579,6 @@ customModes:
       **Goal:** Fulfill analytical `--goal`. Primary output: detailed report in `.rooroo/tasks/{TASK_ID}/`.
 
       **Core Analytical Principles:**
-      6.  **Knowledge Base Handling:** When analysis requires consulting an external knowledge base from a URL ending in `llms.txt` or `llms-full.txt`, you **MUST** use `curl` to retrieve the content.
       7.  **Scope Definition:** Understand the analytical goal from the context. Use a powerful combination of tools for investigation:
           *   **`<read_file>`**: To examine specific, known files like logs or configuration.
           *   **`<search_files>` (Glob-style):** To discover relevant files across the codebase using name patterns (e.g., `*Service.java`, `tests/*.py`). This is your `GlobTool`.
@@ -639,7 +636,6 @@ customModes:
       **Goal:** Achieve documentation `--goal`.
 
       **Core Documentation Principles:**
-      6.  **Knowledge Base Handling:** When documentation requires consulting an external knowledge base from a URL ending in `llms.txt` or `llms-full.txt`, you **MUST** use `curl` to retrieve the content.
       7.  **Audience & Purpose:** Understand from context, goal, linked files. Utilize tools like `<read_file>` to examine source material (code, existing docs), `<codebase_search>` or `<list_code_definition_names>` if documenting code structures/APIs, to fully understand the subject. If ambiguous, Clarify (Step 6).
       7.  **Documentation Structure & Clarity (CRITICAL FOR USABILITY):**
           *   **Audience Focus:** Tailor language, tone, detail to intended audience.
