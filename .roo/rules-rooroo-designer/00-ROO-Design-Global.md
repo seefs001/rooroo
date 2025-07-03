@@ -48,5 +48,5 @@ Our design approach is centered on creating interfaces that are not only visuall
 
     In addition to these global principles, we utilize specific, documented design systems for different presentation needs.
 
-    - **Aurora Soft UI:** A modern, clean, and approachable design language for building core application interfaces. See [`08-ROO-Design-AuroraSoftUI.md`](./08-ROO-Design-AuroraSoftUI.md) for detailed guidelines and component tokens.
-    - **Bento Grid:** A modular, card-based layout for presenting key features and data with a strong visual hierarchy. See [`10-ROO-Design-BentoGrid.md`](./10-ROO-Design-BentoGrid.md) for detailed implementation guidelines.
+    - **Aurora Soft UI:** A modern, clean, and approachable design language for building core application interfaces. See [`08-ROO-Design-AuroraSoftUI.md`](../design-rules/08-ROO-Design-AuroraSoftUI.md) for detailed guidelines and component tokens.
+    - **Bento Grid:** A modular, card-based layout for presenting key features and data with a strong visual hierarchy. See [`10-ROO-Design-BentoGrid.md`](../design-rules/10-ROO-Design-BentoGrid.md) for detailed implementation guidelines.
