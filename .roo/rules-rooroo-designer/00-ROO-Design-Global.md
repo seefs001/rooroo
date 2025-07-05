@@ -62,7 +62,7 @@ Aurora Soft UI creates comfortable, engaging digital environments through soft v
 
 **Use Cases:** Login screens, dashboards, settings panels, user profiles, onboarding sequences, and any interface requiring emotional connection.
 
-*See [`08-ROO-Design-AuroraSoftUI.md`](.roo/design-rules/08-ROO-Design-AuroraSoftUI.md) for complete specifications.*
+*See [`08-ROO-Design-AuroraSoftUI.md`](~/.roo/design-rules/08-ROO-Design-AuroraSoftUI.md) for complete specifications.*
 
 #### 9.2 Bento Grid - Data-Rich & Scannable
 **Best For:** Dashboards, product showcases, content libraries, and complex information displays
@@ -78,7 +78,7 @@ The Bento Grid system creates elegant, information-rich layouts inspired by Japa
 
 **Use Cases:** Analytics dashboards, product specification pages, content management systems, portfolio displays, and feature comparison layouts.
 
-*See [`10-ROO-Design-BentoGrid.md`](.roo/design-rules/10-ROO-Design-BentoGrid.md) for complete specifications.*
+*See [`10-ROO-Design-BentoGrid.md`](~/.roo/design-rules/10-ROO-Design-BentoGrid.md) for complete specifications.*
 
 #### 9.3 Zenith - Clean & Minimal
 **Best For:** Content-focused websites, marketing pages, blogs, and public-facing interfaces
@@ -94,7 +94,7 @@ Zenith creates modern, clean interfaces with excellent usability through minimal
 
 **Use Cases:** Corporate websites, landing pages, blog interfaces, documentation sites, and marketing materials.
 
-*See [`11-ROO-Design-Zenith.md`](.roo/design-rules/11-ROO-Design-Zenith.md) for complete specifications.*
+*See [`11-ROO-Design-Zenith.md`](~/.roo/design-rules/11-ROO-Design-Zenith.md) for complete specifications.*
 
 #### 9.4 System Selection Guidelines
 

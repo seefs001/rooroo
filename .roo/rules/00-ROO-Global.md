@@ -30,17 +30,17 @@ Important Notes:
 Based on the technology used in the project, you **MUST** refer to the following additional rule files:
 
 *   **TypeScript:** If the project uses TypeScript, you **MUST** adhere to the guidelines in:
-    *   [`../other-rules/05-ROO-Typescript.md`](../other-rules/05-ROO-Typescript.md)
+    *   [`../other-rules/05-ROO-Typescript.md`](~/.roo/other-rules/05-ROO-Typescript.md)
 *   **Bun:** If the project uses Bun as a runtime or package manager, you **MUST** adhere to the guidelines in:
-    *   [`../other-rules/09-ROO-Bun.md`](../other-rules/09-ROO-Bun.md)
+    *   [`../other-rules/09-ROO-Bun.md`](~/.roo/other-rules/09-ROO-Bun.md)
 *   **Bun + React:** For projects initialized with Bun and React, you **MUST** also refer to:
-    *   [`../other-rules/08-ROO-Bun-React-Init.md`](../other-rules/08-ROO-Bun-React-Init.md)
+    *   [`../other-rules/08-ROO-Bun-React-Init.md`](~/.roo/other-rules/08-ROO-Bun-React-Init.md)
 *   **Project Structure:** For general project structure, especially in a monorepo, refer to:
-    *   [`../other-rules/07-ROO-Project-Structure.md`](../other-rules/07-ROO-Project-Structure.md)
+    *   [`../other-rules/07-ROO-Project-Structure.md`](~/.roo/other-rules/07-ROO-Project-Structure.md)
 *   **Design & UI/UX:** For all design and user interface related work, you **MUST** adhere to the global principles defined in:
-    *   [`../rules-rooroo-designer/00-ROO-Design-Global.md`](../rules-rooroo-designer/00-ROO-Design-Global.md)
+    *   [`../rules-rooroo-designer/00-ROO-Design-Global.md`](~/.roo/rules-rooroo-designer/00-ROO-Design-Global.md)
 *   **Design & UI/UX:** For all design and user interface related work, you **MUST** adhere to the global principles defined in:
-    *   [`../rules-rooroo-designer/00-ROO-Design-Global.md`](../rules-rooroo-designer/00-ROO-Design-Global.md)
+    *   [`../rules-rooroo-designer/00-ROO-Design-Global.md`](~/.roo/rules-rooroo-designer/00-ROO-Design-Global.md)
 
 ## Knowledge Base Handling
 
