@@ -71,21 +71,3 @@ An example structure might look like this:
     └── tsconfig/
 ```
 
-## 2. File Naming and Organization
-- **Route Directories:** Use kebab-case for route directories (e.g. `api/hello-world/route`).
-- **Component Files:** Use PascalCase for component files (e.g. `components/Button.tsx`).
-- **UI Components:**
-    - Foundational UI components (like shadcn/ui) are located in `components/ui`.
-    - All other general-purpose components are in the root `components/` folder.
-- **Colocation:** Co-locate files within the feature or component folder where they are exclusively used. If a component or utility can be used across the application, place it in a shared directory like `components/` or `utils/`.
-
-## 3. Utility Functions
-- **Location:** Reusable logic should be extracted into utility functions and placed in a `utils/` directory.
-- **Third-Party Libraries:** For common operations (e.g., on arrays, objects, strings), use established utility libraries like `lodash`.
-- **Bundle Size:** To minimize the final bundle size, import specific functions from libraries rather than the entire library.
-  ```ts
-  // Good: Imports a single function
-  import groupBy from "lodash/groupBy";
-
-  // Bad: Imports the entire library
-  import _ from "lodash";

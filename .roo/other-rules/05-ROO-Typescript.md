@@ -40,3 +40,23 @@ This document outlines specific rules, conventions, and best practices for TypeS
 ## 4. Asynchronous Code
 *   **`async/await`:** Prefer `async/await` over raw Promises for cleaner, more readable asynchronous code.
 *   **Error Handling:** Always wrap `await` calls in `try...catch` blocks or use promise chaining with `.catch()` to handle potential rejections gracefully. Do not let promises go unhandled.
+
+## 5. Utility Functions & Libraries
+- **Location:** While project structure dictates a `utils/` directory, the implementation of these utilities should follow TypeScript best practices.
+- **Third-Party Libraries:** For common operations (e.g., on arrays, objects, strings), use established utility libraries like `lodash`.
+- **Bundle Size:** To minimize the final bundle size, import specific functions from libraries rather than the entire library.
+  ```ts
+  // Good: Imports a single function
+  import groupBy from "lodash/groupBy";
+
+  // Bad: Imports the entire library
+  import _ from "lodash";
+  ```
+
+## 6. File Naming and Organization
+- **Route Directories:** Use kebab-case for route directories (e.g. `api/hello-world/route`).
+- **Component Files:** Use PascalCase for component files (e.g. `components/Button.tsx`).
+- **UI Components:**
+    - Foundational UI components (like shadcn/ui) are located in `components/ui`.
+    - All other general-purpose components are in the root `components/` folder.
+- **Colocation:** Co-locate files within the feature or component folder where they are exclusively used. If a component or utility can be used across the application, place it in a shared directory like `components/` or `utils/`.
